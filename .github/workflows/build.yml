@@ -1,0 +1,21 @@
+name: Build Windows EXE
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install pyinstaller
+      - run: pyinstaller --onefile --name hbf.exe hbf.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hbf-exe
+          path: dist/hbf.exe
