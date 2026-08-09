@@ -1,0 +1,15 @@
+[HBF]
+Version: 1.0
+Magic: HBF
+Fecha: 2026-08-06T14:04:03.620422
+
+[METADATOS]
+{
+  "titulo": "hola",
+  "autor": "Lucas Sogaray"
+}
+
+[TEXTO]
+Escribe tu contenido aqui.
+
+[FIN]

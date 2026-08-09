@@ -1,0 +1,30 @@
+[HBF]
+Version: 1.0
+Magic: HBF
+Fecha: 2026-08-06T14:43:18.989467
+
+[METADATOS]
+{
+  "titulo": "Mi HBF",
+  "autor": "Lucas"
+}
+
+[TEXTO]
+holaaa
+
+
+
+[LISTAS]
+- Item 1
+- Item 2
+
+[NOTAS]
+Nota personal.
+
+[NUMERICO]
+{"datos": [1, 2, 3]}
+
+[TITULOS]
+Titulo principal
+
+[FIN]

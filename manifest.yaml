@@ -1,0 +1,11 @@
+control:
+    Package: hbf
+    Version: 1.0.0
+    Architecture: all
+    Maintainer: Lucas Sogaray <lucassogaray72@gmail.com>
+    Depends: python
+    Description: |-
+        Hybrid Binary Format - Un formato de archivo todo en uno
+        Crea archivos que combinan texto, binario, metadatos y mas.
+        .
+        Ideal para organizar proyectos y notas desde Termux.
