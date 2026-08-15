@@ -1,7 +1,7 @@
 ```markdown
 # 📁 HBF - Hybrid Binary Format
 
-**HBF** es un formato de archivo todo en uno que combina texto, binario, metadatos, listas y datos numéricos en un solo archivo. Creado desde Termux para ser simple, útil y portable.
+**HBF** es un formato de archivo todo en uno que combina texto, binario, metadatos, listas y datos numéricos en un solo archivo. Creado desde Termux, diseñado para ser simple, útil y portable.
 
 ---
 
@@ -15,39 +15,45 @@
 | 📋 **Listas** | Listas jerárquicas |
 | 🔢 **Numérico** | Datos numéricos estructurados |
 | 📌 **Notas** | Notas personales o técnicas |
-| 🌍 **Bilingüe** | Español / Inglés (seleccionable al inicio) |
+| 🌍 **Multilingüe** | Español / Inglés / Portugués (detección automática) |
 | 🔒 **Cifrado** | Protege archivos con contraseña (AES) |
 | 🔗 **Combinar** | Une dos archivos HBF en uno |
-| 📤 **Exportar** | Exporta a TXT, JSON o MD |
+| 📤 **Exportar** | Exporta a TXT, JSON, MD, XML, CSV o YAML |
 | 🔍 **Buscar** | Busca palabras dentro del archivo |
 | 📂 **Listar** | Muestra todos los HBF en Download |
+| 💾 **Configurable** | Guarda colores y ruta base en un archivo de configuración |
+| 🖥️ **Multiplataforma** | Funciona en Termux (Android), Linux y Windows |
 
 ---
 
 ## 📦 Instalación
 
-### Opción 1: Desde el paquete `.deb`
+### Opción 1: Desde PyPI (recomendado)
 
 ```bash
-dpkg -i hbf_2.0.0_all.deb
+pip install hbf-hyper
+hbf
 ```
 
 Opción 2: Desde el código fuente
 
 ```bash
-git clone https://github.com/LucassogarayDA/hbf.git
+git clone https://github.com/lucassogarayDA/hbf.git
 cd hbf
 python hbf.py
 ```
 
-Dependencias
-
-· Python 3
-· cryptography (para el cifrado)
+Opción 3: Desde el paquete .deb (Termux/Linux)
 
 ```bash
-pkg install python python-cryptography
+dpkg -i hbf_2.1.1_all.deb
+hbf
 ```
+
+Dependencias
+
+· Python 3.7+
+· cryptography (para el cifrado) — se instala automáticamente con pip
 
 ---
 
@@ -59,17 +65,18 @@ Ejecutá el comando y seguí el menú interactivo:
 hbf
 ```
 
-Al abrir, vas a poder elegir el idioma:
+Al abrir, podés elegir idioma o usar la detección automática:
 
 ```
   Select language / Elegí idioma:
   1. Español
   2. English
+  3. Português
 ```
 
 ---
 
-📋 Menú completo
+📋 Menú completo (19 opciones)
 
 ```
   1.  📝 Crear HBF
@@ -88,8 +95,8 @@ Al abrir, vas a poder elegir el idioma:
  14.  📊 Estadísticas
  15.  🎨 Colores
  16.  🔗 Combinar HBF
- 17.  📲 Compartir
- 18.  🔒 Proteger con clave
+ 17.  🔒 Proteger con clave
+ 18.  📁 Cambiar ruta base
  19.  🚪 Salir
 ```
 
@@ -99,9 +106,9 @@ Al abrir, vas a poder elegir el idioma:
 
 ```hbf
 [HBF]
-Version: 2.0.0
+Version: 2.1.1
 Magic: HBF
-Fecha: 2026-08-07T00:00:00
+Fecha: 2026-08-15T00:00:00
 
 [METADATOS]
 {
@@ -156,10 +163,21 @@ Opción 11 → Seleccionar archivo → Formato 1 (TXT)
 
 ```bash
 hbf
-Opción 18 → Elegir archivo → Opción 1 (Cifrar) → Ingresar contraseña
+Opción 17 → Elegir archivo → Opción 1 (Cifrar) → Ingresar contraseña
 ```
 
 El archivo cifrado se guarda con extensión .hbf.enc
+
+---
+
+📁 Cambiar ruta base
+
+Podés configurar una carpeta por defecto para importar archivos:
+
+```bash
+hbf
+Opción 18 → Ingresar una ruta (ej: ~/Imagenes/)
+```
 
 ---
 
@@ -171,14 +189,14 @@ mkdir -p hbf_package/data/data/com.termux/files/usr/bin
 cp hbf.py hbf_package/data/data/com.termux/files/usr/bin/hbf
 chmod +x hbf_package/data/data/com.termux/files/usr/bin/hbf
 echo "Package: hbf
-Version: 2.0.0
+Version: 2.1.1
 Architecture: all
 Maintainer: Lucas Sogaray <lucassogaray72@gmail.com>
 Depends: python, python-cryptography
 Description: Hybrid Binary Format - Un formato de archivo todo en uno" > hbf_package/DEBIAN/control
 chmod 755 hbf_package/DEBIAN
 dpkg-deb --build hbf_package
-mv hbf_package.deb hbf_2.0.0_all.deb
+mv hbf_package.deb hbf_2.1.1_all.deb
 ```
 
 ---
@@ -188,16 +206,17 @@ mv hbf_package.deb hbf_2.0.0_all.deb
 ☑ Formato HBF básico
 ☑ Binario (base64)
 ☑ Edición de bloques
-☑ Exportar a TXT, JSON, MD
+☑ Exportar a TXT, JSON, MD, XML, CSV y YAML
 ☑ Búsqueda
 ☑ Estadísticas
 ☑ Combinar HBF
 ☑ Cifrado con contraseña
-☑ Idiomas (Español/Inglés)
+☑ Idiomas (Español/Inglés/Portugués)
 ☑ Paquete .deb
-☐ Modo oscuro
+☑ Multiplataforma (Android, Linux, Windows)
+☑ Ruta base configurable
 ☐ Guardar configuración de colores
-☐ Compartir directamente por WhatsApp
+☐ Botón visible para salir de opciones
 
 ---
 
@@ -231,15 +250,3 @@ Si tenés preguntas, sugerencias o encontrás un error, podés abrir un Issue en
 Hecho con 💻 y ☕ desde Termux
 
 ```
-
----
-
-## 💾 Guardar y subir
-
-```bash
-git add README.md
-git commit -m "README actualizado con toda la info"
-git push
-```
-
----
