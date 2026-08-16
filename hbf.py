@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# hbf.py - Hybrid Binary Format v2.1.1
+# hbf.py - Hybrid Binary Format v2.1.2
 # Creado por Lucas Sogaray
 # Compatibilidad extrema: Android (Termux) | Windows | Linux
 
@@ -12,7 +12,15 @@ import platform
 import locale
 from datetime import datetime
 
-VERSION = "2.1.1"
+VERSION = "2.1.2"
+
+def crear_donadores_si_no_existe():
+    ruta = os.path.expanduser("~/hbf-proyecto/donadores.txt")
+    if not os.path.exists(ruta):
+        os.makedirs(os.path.dirname(ruta), exist_ok=True)
+        with open(ruta, "w", encoding="utf-8") as f:
+            f.write("Lucas Sogaray (creador)\n")
+            f.write("¡Apoyá en Cafecito para aparecer acá!\n")
 
 # ====================
 # DETECCIÓN DE SISTEMA OPERATIVO
@@ -75,7 +83,8 @@ IDIOMAS = {
         "titulo": "📁 HBF - Hybrid Binary Format",
         "creado_por": "Creado por Lucas Sogaray",
         "guardado_en": "Todos los archivos se guardan en:",
-        "menu": "¿Qué querés hacer?",
+        "menu": "¿Qué querés hacer?"
+       ,"cancelar_opcion": "💡 Podés escribir 'salir' en cualquier opción para cancelar",
         "opciones": [
             "📝 Crear HBF", "📖 Leer HBF", "🖼️ Guardar binario",
             "📤 Extraer binario", "✏️ Editar TEXTO", "📋 Editar LISTAS",
@@ -83,7 +92,7 @@ IDIOMAS = {
             "📝 Editar METADATOS", "📤 Exportar", "🔍 Buscar",
             "📂 Listar HBF", "📊 Estadísticas", "🎨 Colores",
             "🔗 Combinar HBF", "🔒 Proteger con clave", "📁 Cambiar ruta base",
-            "🚪 Salir"
+            "🚪 Salir","☕ Apoyar con cafecito", "💖 Ver donadores",
         ],
         "recordatorio": "💡 Escribí el número de la opción (ej: 1, 2, 3...)",
         "salir": "👋 ¡Chau! Gracias por usar HBF",
@@ -91,7 +100,8 @@ IDIOMAS = {
         "error": "❌ Opción no válida",
         "cancelar": "✖️ Operación cancelada",
         "ruta_actual": "📁 Ruta base actual:",
-        "nueva_ruta": "📁 Nueva ruta base (dejá vacío para usar Descargas):"
+        "nueva_ruta": "📁 Nueva ruta base (dejá vacío para usar Descargas):",
+        "cancelar_opcion": "💡 Podés escribir 'salir' en cualquier opción para cancelar",
     },
     "en": {
         "titulo": "📁 HBF - Hybrid Binary Format",
@@ -105,7 +115,7 @@ IDIOMAS = {
             "📝 Edit METADATA", "📤 Export", "🔍 Search",
             "📂 List HBF", "📊 Statistics", "🎨 Colors",
             "🔗 Combine HBF", "🔒 Protect with key", "📁 Change base path",
-            "🚪 Exit"
+            "🚪 Exit", "☕ Support on Cafecito", "💖 View donors",
         ],
         "recordatorio": "💡 Type the option number (e.g. 1, 2, 3...)",
         "salir": "👋 Bye! Thanks for using HBF",
@@ -113,7 +123,8 @@ IDIOMAS = {
         "error": "❌ Invalid option",
         "cancelar": "✖️ Operation cancelled",
         "ruta_actual": "📁 Current base path:",
-        "nueva_ruta": "📁 New base path (leave empty to use Downloads):"
+        "nueva_ruta": "📁 New base path (leave empty to use Downloads):",
+        "cancelar_opcion": "💡 You can type 'exit' in any option to cancel",
     },
     "pt": {
         "titulo": "📁 HBF - Hybrid Binary Format",
@@ -127,7 +138,7 @@ IDIOMAS = {
             "📝 Editar METADADOS", "📤 Exportar", "🔍 Buscar",
             "📂 Listar HBF", "📊 Estatísticas", "🎨 Cores",
             "🔗 Combinar HBF", "🔒 Proteger com chave", "📁 Alterar caminho base",
-            "🚪 Sair"
+            "🚪 Sair", "☕ Apoiar no Cafecito", "💖 Ver doadores"
         ],
         "recordatorio": "💡 Digite o número da opção (ex: 1, 2, 3...)",
         "salir": "👋 Tchau! Obrigado por usar HBF",
@@ -135,7 +146,9 @@ IDIOMAS = {
         "error": "❌ Opção inválida",
         "cancelar": "✖️ Operação cancelada",
         "ruta_actual": "📁 Caminho base atual:",
-        "nueva_ruta": "📁 Novo caminho base (deixe vazio para usar Downloads):"
+        "nueva_ruta": "📁 Novo caminho base (deixe vazio para usar Downloads):",
+        "cancelar_opcion": "💡 Você pode digitar 'sair' em qualquer opção para cancelar",
+
     }
 }
 
@@ -260,6 +273,7 @@ def mostrar_menu():
         print(f"    │  {i:2d}.  {opcion:<28}│")
     print("    └────────────────────────────────────────────┘")
     print(f"\n{C['info']}   {T['recordatorio']}{C['reset']}")
+    print(f"\n{C['info']}   {T['cancelar_opcion']}{C['reset']}")
 
 def crear_hbf():
     print("\n   📝  CREAR HBF\n")
@@ -820,6 +834,39 @@ def proteger_hbf():
     else:
         error("Opción no válida")
 
+def abrir_cafecito():
+    import platform
+    url = "https://cafecito.app/lucasda"
+    sistema = platform.system()
+    try:
+        if sistema == "Android":
+            os.system(f"am start -a android.intent.action.VIEW -d {url}")
+        elif sistema == "Windows":
+            os.system(f"start {url}")
+        else:
+            os.system(f"xdg-open {url}")
+        info("Abriendo Cafecito...")
+    except:
+        error("No se pudo abrir el navegador")
+
+def ver_donadores():
+    print("\n   🙏  AGRADECIMIENTOS")
+    print("   " + "=" * 48)
+    print("   Gracias a las personas que apoyan HBF:")
+    print("")
+    
+    try:
+        with open(os.path.expanduser("~/hbf-proyecto/donadores.txt"), "r", encoding="utf-8") as f:
+            donadores = f.read().strip().split("\n")
+            for donante in donadores:
+                if donante.strip():
+                    print(f"   • {donante}")
+    except:
+        print("   • (No hay donadores registrados aún)")
+    
+    print("   " + "=" * 48)
+    print("   ¿Querés aparecer acá? Apoyá en Cafecito!")
+
 def main():
     while True:
         mostrar_menu()
@@ -865,6 +912,10 @@ def main():
             print(f"\n   {T['salir']}")
             print(f"   📁  {T['archivos_en']} {RUTA_DESCARGAS}\n")
             break
+        elif opcion == "20":
+            abrir_cafecito()
+        elif opcion == "21":
+            ver_donadores()
         else:
             error(T['error'])
         esperar()

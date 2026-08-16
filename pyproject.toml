@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "hbf-hyper"
-version = "2.1.1"
+version = "2.1.2"
 description = "Hybrid Binary Format - Un formato de archivo todo en uno"
 readme = "README.md"
 authors = [{name = "Lucas Sogaray", email = "lucassogaray72@gmail.com"}]
