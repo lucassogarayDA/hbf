@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# hbf.py - Hybrid Binary Format v3.0.0
+# hbf.py - Hybrid Binary Format v3.0.1
 # Creado por Lucas Sogaray
 # Compatibilidad extrema: Android (Termux) | Windows | Linux
 # ¡El formato que REEMPLAZA a todos los demás!
@@ -18,7 +18,7 @@ import gzip
 import io
 import shutil
 
-VERSION = "3.0.0"
+VERSION = "3.0.1"
 
 # ====================
 # DETECCIÓN DE SISTEMA OPERATIVO
@@ -123,40 +123,217 @@ class HBFTranslator:
         }
 
     def idioma_es(self):
-        return {"nombre_idioma": "Español", "titulo": "📁 HBF v3.0"}
+        return {
+        "nombre_idioma": "Español",
+        "titulo": "📁 HBF - Hybrid Binary Format v3.0",
+        "creado_por": "Creado por Lucas Sogaray",
+        "guardado_en": "Todos los archivos se guardan en:",
+        "menu": "¿Qué querés hacer?",
+        "cancelar_opcion": "💡 Podés escribir 'salir' en cualquier opción para cancelar",
+        "recordatorio": "💡 Escribí el número de la opción (ej: 1, 2, 3...)",
+        "salir": "👋 ¡Chau! Gracias por usar HBF",
+        "archivos_en": "Tus archivos están en:",
+        "error": "❌ Opción no válida",
+        "cancelar": "✖️ Operación cancelada",
+        "ruta_actual": "📁 Ruta base actual:",
+        "nueva_ruta": "📁 Nueva ruta base (dejá vacío para usar Descargas):",
+        "idioma_opciones": "🌍 Seleccionar idioma",
+        "configuracion": "⚙️ Configuración",
+        "no_encontrado": "❌ No encontrado",
+        "exito": "✅ Operación exitosa",
+        "opciones": ["📝 Crear HBF", "📖 Leer HBF", "📥 Importar a HBF", "✏️ Editar TEXTO", "📋 Editar LISTAS", "💬 Editar NOTAS", "🔢 Editar NUMERICO", "🏷️ Editar TITULOS", "📝 Editar METADATOS", "💻 Editar CODE", "🌐 Editar API", "🗄️ Editar SQL", "📦 Editar DEPLOY", "🧪 Editar TEST", "📊 Editar SCHEMA", "🔐 Editar ENV", "⚙️ Editar CONFIG", "📖 Editar DOCS", "⚡ Editar COMANDOS", "🐍 Editar SCRIPTS", "📦 Editar DEPENDENCIAS", "🖼️ Gestionar imágenes", "🖼️ Guardar binario", "📤 Extraer binario", "📤 Exportar", "🔍 Buscar", "📂 Listar HBF", "📊 Estadísticas", "📜 Historial", "🔗 Combinar HBF", "🔒 Proteger con clave", "📦 Generar desde HBF", "📁 Cambiar ruta base", "🎨 Colores", "🌍 Cambiar idioma", "🚪 Salir"],
+        "imagen_agregada": "✅ Imagen agregada exitosamente",
+        "imagen_extraida": "✅ Imagen extraída exitosamente",
+        "imagen_no_encontrada": "❌ Imagen no encontrada",
+        "imagenes_lista": "📋 Lista de imágenes",
+        "gestion_imagenes": "🖼️ Gestión de imágenes",
+        "generando_archivos": "📦 Generando archivos desde HBF...",
+        "archivo_generado": "✅ Archivo generado: {archivo}",
+        "bloque_actualizado": "✅ Bloque [{bloque}] actualizado",
+        "bloque_no_encontrado": "❌ No se encontró el bloque [{bloque}]",
+        "seleccionar_bloque": "📦 Seleccionar bloque:",
+        "nuevo_contenido": "📝 Nuevo contenido (Enter dos veces para terminar):",
+        "clave": "🔑 Clave: ",
+        "confirmar_clave": "🔑 Confirmar clave: ",
+        "archivo_cifrado": "✅ Archivo cifrado: {archivo}",
+        "archivo_descifrado": "✅ Archivo descifrado: {archivo}",
+        "recordar_clave": "💡 Recordá la clave. El archivo original NO fue eliminado.",
+        "exportar_formato": "📤 Exportar a formato:",
+        "formato_txt": "1. TXT",
+        "formato_json": "2. JSON",
+        "formato_md": "3. MD",
+        "formato_xml": "4. XML",
+        "formato_csv": "5. CSV",
+        "formato_yaml": "6. YAML",
+        "formato_html": "7. HTML",
+        "formato_ini": "8. INI",
+        "formato_toml": "9. TOML",
+        "importar_formato": "📥 Importar desde formato:",
+        "formato_detectado": "🔍 Formato detectado: {formato}",
+    }
 
     def idioma_en(self):
-        return {"nombre_idioma": "English", "titulo": "📁 HBF v3.0"}
+        return {
+        "nombre_idioma": "English",
+        "titulo": "📁 HBF - Hybrid Binary Format v3.0",
+        "creado_por": "Created by Lucas Sogaray",
+        "guardado_en": "All files are saved in:",
+        "menu": "What do you want to do?",
+        "cancelar_opcion": "💡 You can type 'exit' in any option to cancel",
+        "recordatorio": "💡 Type the option number (e.g. 1, 2, 3...)",
+        "salir": "👋 Bye! Thanks for using HBF",
+        "archivos_en": "Your files are in:",
+        "error": "❌ Invalid option",
+        "cancelar": "✖️ Operation cancelled",
+        "ruta_actual": "📁 Current base path:",
+        "nueva_ruta": "📁 New base path (leave empty to use Downloads):",
+        "idioma_opciones": "🌍 Select language",
+        "configuracion": "⚙️ Configuration",
+        "no_encontrado": "❌ Not found",
+        "exito": "✅ Success",
+        "opciones": ["📝 Create HBF", "📖 Read HBF", "📥 Import to HBF", "✏️ Edit TEXT", "📋 Edit LISTS", "💬 Edit NOTES", "🔢 Edit NUMERIC", "🏷️ Edit TITLES", "📝 Edit METADATA", "💻 Edit CODE", "🌐 Edit API", "🗄️ Edit SQL", "📦 Edit DEPLOY", "🧪 Edit TEST", "📊 Edit SCHEMA", "🔐 Edit ENV", "⚙️ Edit CONFIG", "📖 Edit DOCS", "⚡ Edit COMMANDS", "🐍 Edit SCRIPTS", "📦 Edit DEPENDENCIES", "🖼️ Manage images", "🖼️ Save binary", "📤 Extract binary", "📤 Export", "🔍 Search", "📂 List HBF", "📊 Statistics", "📜 History", "🔗 Combine HBF", "🔒 Protect with key", "📦 Generate from HBF", "📁 Change base path", "🎨 Colors", "🌍 Change language", "🚪 Exit"],
+        "imagen_agregada": "✅ Image added successfully",
+        "imagen_extraida": "✅ Image extracted successfully",
+        "imagen_no_encontrada": "❌ Image not found",
+        "imagenes_lista": "📋 Image list",
+        "gestion_imagenes": "🖼️ Image management",
+        "generando_archivos": "📦 Generating files from HBF...",
+        "archivo_generado": "✅ File generated: {archivo}",
+        "bloque_actualizado": "✅ Block [{bloque}] updated",
+        "bloque_no_encontrado": "❌ Block [{bloque}] not found",
+        "seleccionar_bloque": "📦 Select block:",
+        "nuevo_contenido": "📝 New content (Enter twice to finish):",
+        "clave": "🔑 Key: ",
+        "confirmar_clave": "🔑 Confirm key: ",
+        "archivo_cifrado": "✅ File encrypted: {archivo}",
+        "archivo_descifrado": "✅ File decrypted: {archivo}",
+        "recordar_clave": "💡 Remember the key. Original file was NOT deleted.",
+        "exportar_formato": "📤 Export to format:",
+        "formato_txt": "1. TXT",
+        "formato_json": "2. JSON",
+        "formato_md": "3. MD",
+        "formato_xml": "4. XML",
+        "formato_csv": "5. CSV",
+        "formato_yaml": "6. YAML",
+        "formato_html": "7. HTML",
+        "formato_ini": "8. INI",
+        "formato_toml": "9. TOML",
+        "importar_formato": "📥 Import from format:",
+        "formato_detectado": "🔍 Detected format: {formato}",
+    }
 
     def idioma_pt(self):
-        return {"nombre_idioma": "Português", "titulo": "📁 HBF v3.0"}
+        return {
+        "nombre_idioma": "Português",
+        "titulo": "📁 HBF - Hybrid Binary Format v3.0",
+        "creado_por": "Criado por Lucas Sogaray",
+        "guardado_en": "Todos os arquivos são salvos em:",
+        "menu": "O que você quer fazer?",
+        "cancelar_opcion": "💡 Você pode digitar 'sair' em qualquer opção para cancelar",
+        "recordatorio": "💡 Digite o número da opção (ex: 1, 2, 3...)",
+        "salir": "👋 Tchau! Obrigado por usar HBF",
+        "archivos_en": "Seus arquivos estão em:",
+        "error": "❌ Opção inválida",
+        "cancelar": "✖️ Operação cancelada",
+        "ruta_actual": "📁 Caminho base atual:",
+        "nueva_ruta": "📁 Novo caminho base (deixe vazio para usar Downloads):",
+        "idioma_opciones": "🌍 Selecionar idioma",
+        "configuracion": "⚙️ Configuração",
+        "no_encontrado": "❌ Não encontrado",
+        "exito": "✅ Sucesso",
+        "opciones": ["📝 Criar HBF", "📖 Ler HBF", "📥 Importar para HBF", "✏️ Editar TEXTO", "📋 Editar LISTAS", "💬 Editar NOTAS", "🔢 Editar NUMÉRICO", "🏷️ Editar TÍTULOS", "📝 Editar METADADOS", "💻 Editar CODE", "🌐 Editar API", "🗄️ Editar SQL", "📦 Editar DEPLOY", "🧪 Editar TEST", "📊 Editar SCHEMA", "🔐 Editar ENV", "⚙️ Editar CONFIG", "📖 Editar DOCS", "⚡ Editar COMANDOS", "🐍 Editar SCRIPTS", "📦 Editar DEPENDÊNCIAS", "🖼️ Gerenciar imagens", "🖼️ Salvar binário", "📤 Extrair binário", "📤 Exportar", "🔍 Buscar", "📂 Listar HBF", "📊 Estatísticas", "📜 Histórico", "🔗 Combinar HBF", "🔒 Proteger com chave", "📦 Gerar a partir de HBF", "📁 Alterar caminho base", "🎨 Cores", "🌍 Mudar idioma", "🚪 Sair"],
+        "imagen_agregada": "✅ Imagem adicionada com sucesso",
+        "imagen_extraida": "✅ Imagem extraída com sucesso",
+        "imagen_no_encontrada": "❌ Imagem não encontrada",
+        "imagenes_lista": "📋 Lista de imagens",
+        "gestion_imagenes": "🖼️ Gerenciamento de imagens",
+        "generando_archivos": "📦 Gerando arquivos a partir de HBF...",
+        "archivo_generado": "✅ Arquivo gerado: {archivo}",
+        "bloque_actualizado": "✅ Bloco [{bloque}] atualizado",
+        "bloque_no_encontrado": "❌ Bloco [{bloque}] não encontrado",
+        "seleccionar_bloque": "📦 Selecionar bloco:",
+        "nuevo_contenido": "📝 Novo conteúdo (Enter duas vezes para terminar):",
+        "clave": "🔑 Chave: ",
+        "confirmar_clave": "🔑 Confirmar chave: ",
+        "archivo_cifrado": "✅ Arquivo criptografado: {archivo}",
+        "archivo_descifrado": "✅ Arquivo descriptografado: {archivo}",
+        "recordar_clave": "💡 Lembre-se da chave. O arquivo original NÃO foi excluído.",
+        "exportar_formato": "📤 Exportar para formato:",
+        "formato_txt": "1. TXT",
+        "formato_json": "2. JSON",
+        "formato_md": "3. MD",
+        "formato_xml": "4. XML",
+        "formato_csv": "5. CSV",
+        "formato_yaml": "6. YAML",
+        "formato_html": "7. HTML",
+        "formato_ini": "8. INI",
+        "formato_toml": "9. TOML",
+        "importar_formato": "📥 Importar do formato:",
+        "formato_detectado": "🔍 Formato detectado: {formato}",
+    }
 
     def idioma_fr(self):
-        return {"nombre_idioma": "Français", "titulo": "📁 HBF v3.0"}
+        # Sin traducción completa todavía: usamos español como base
+        # para no dejar el menú roto, y solo pisamos el nombre mostrado.
+        datos = dict(self.idioma_es())
+        datos["nombre_idioma"] = "Français"
+        return datos
 
     def idioma_de(self):
-        return {"nombre_idioma": "Deutsch", "titulo": "📁 HBF v3.0"}
+        # Sin traducción completa todavía: usamos español como base
+        # para no dejar el menú roto, y solo pisamos el nombre mostrado.
+        datos = dict(self.idioma_es())
+        datos["nombre_idioma"] = "Deutsch"
+        return datos
 
     def idioma_it(self):
-        return {"nombre_idioma": "Italiano", "titulo": "📁 HBF v3.0"}
+        # Sin traducción completa todavía: usamos español como base
+        # para no dejar el menú roto, y solo pisamos el nombre mostrado.
+        datos = dict(self.idioma_es())
+        datos["nombre_idioma"] = "Italiano"
+        return datos
 
     def idioma_ja(self):
-        return {"nombre_idioma": "日本語", "titulo": "📁 HBF v3.0"}
+        # Sin traducción completa todavía: usamos español como base
+        # para no dejar el menú roto, y solo pisamos el nombre mostrado.
+        datos = dict(self.idioma_es())
+        datos["nombre_idioma"] = "日本語"
+        return datos
 
     def idioma_zh(self):
-        return {"nombre_idioma": "中文", "titulo": "📁 HBF v3.0"}
+        # Sin traducción completa todavía: usamos español como base
+        # para no dejar el menú roto, y solo pisamos el nombre mostrado.
+        datos = dict(self.idioma_es())
+        datos["nombre_idioma"] = "中文"
+        return datos
 
     def idioma_ru(self):
-        return {"nombre_idioma": "Русский", "titulo": "📁 HBF v3.0"}
+        # Sin traducción completa todavía: usamos español como base
+        # para no dejar el menú roto, y solo pisamos el nombre mostrado.
+        datos = dict(self.idioma_es())
+        datos["nombre_idioma"] = "Русский"
+        return datos
 
     def idioma_ko(self):
-        return {"nombre_idioma": "한국어", "titulo": "📁 HBF v3.0"}
+        # Sin traducción completa todavía: usamos español como base
+        # para no dejar el menú roto, y solo pisamos el nombre mostrado.
+        datos = dict(self.idioma_es())
+        datos["nombre_idioma"] = "한국어"
+        return datos
 
     def idioma_ar(self):
-        return {"nombre_idioma": "العربية", "titulo": "📁 HBF v3.0"}
+        # Sin traducción completa todavía: usamos español como base
+        # para no dejar el menú roto, y solo pisamos el nombre mostrado.
+        datos = dict(self.idioma_es())
+        datos["nombre_idioma"] = "العربية"
+        return datos
 
     def idioma_hi(self):
-        return {"nombre_idioma": "हिन्दी", "titulo": "📁 HBF v3.0"}
+        # Sin traducción completa todavía: usamos español como base
+        # para no dejar el menú roto, y solo pisamos el nombre mostrado.
+        datos = dict(self.idioma_es())
+        datos["nombre_idioma"] = "हिन्दी"
+        return datos
 
     def detectar_idioma(self):
         try:
@@ -205,385 +382,6 @@ class HBFTranslator:
         return self.get('opciones')
 
 
-def crear_idiomas_por_defecto(self, directorio):
-    """Crea TODOS los idiomas disponibles al iniciar HBF por primera vez"""
-    idiomas = self.obtener_todos_los_idiomas()
-    for codigo, traducciones in idiomas.items():
-        with open(directorio / f"{codigo}.json", 'w', encoding='utf-8') as f:
-            json.dump(traducciones, f, indent=2, ensure_ascii=False)
-    print(f"✅ {len(idiomas)} idiomas instalados en {directorio}")
-
-    def crear_idioma_base(self, directorio):
-        """Crea el archivo de idioma base con TODAS las traducciones"""
-        base = {
-            "nombre_idioma": "Español",
-            "titulo": "📁 HBF - Hybrid Binary Format v3.0",
-            "creado_por": "Creado por Lucas Sogaray",
-            "guardado_en": "Todos los archivos se guardan en:",
-            "menu": "¿Qué querés hacer?",
-            "cancelar_opcion": "💡 Podés escribir 'salir' en cualquier opción para cancelar",
-            "recordatorio": "💡 Escribí el número de la opción (ej: 1, 2, 3...)",
-            "salir": "👋 ¡Chau! Gracias por usar HBF",
-            "archivos_en": "Tus archivos están en:",
-            "error": "❌ Opción no válida",
-            "cancelar": "✖️ Operación cancelada",
-            "ruta_actual": "📁 Ruta base actual:",
-            "nueva_ruta": "📁 Nueva ruta base (dejá vacío para usar Descargas):",
-            "idioma_opciones": "🌍 Seleccionar idioma",
-            "configuracion": "⚙️ Configuración",
-            "no_encontrado": "❌ No encontrado",
-            "exito": "✅ Operación exitosa",
-            
-            # Opciones del menú principal
-            "opciones": [
-                "📝 Crear HBF",
-                "📖 Leer HBF",
-                "📥 Importar a HBF",
-                "✏️ Editar TEXTO",
-                "📋 Editar LISTAS",
-                "💬 Editar NOTAS",
-                "🔢 Editar NUMERICO",
-                "🏷️ Editar TITULOS",
-                "📝 Editar METADATOS",
-                "💻 Editar CODE",
-                "🌐 Editar API",
-                "🗄️ Editar SQL",
-                "📦 Editar DEPLOY",
-                "🧪 Editar TEST",
-                "📊 Editar SCHEMA",
-                "🔐 Editar ENV",
-                "⚙️ Editar CONFIG",
-                "📖 Editar DOCS",
-                "⚡ Editar COMANDOS",
-                "🐍 Editar SCRIPTS",
-                "📦 Editar DEPENDENCIAS",
-                "🖼️ Gestionar imágenes",
-                "🖼️ Guardar binario",
-                "📤 Extraer binario",
-                "📤 Exportar",
-                "🔍 Buscar",
-                "📂 Listar HBF",
-                "📊 Estadísticas",
-                "📜 Historial",
-                "🔗 Combinar HBF",
-                "🔒 Proteger con clave",
-                "📦 Generar desde HBF",
-                "📁 Cambiar ruta base",
-                "🎨 Colores",
-                "🌍 Cambiar idioma",
-                "🚪 Salir"
-            ],
-            
-            # Mensajes para imágenes
-            "imagen_agregada": "✅ Imagen agregada exitosamente",
-            "imagen_extraida": "✅ Imagen extraída exitosamente",
-            "imagen_no_encontrada": "❌ Imagen no encontrada",
-            "imagenes_lista": "📋 Lista de imágenes",
-            "gestion_imagenes": "🖼️ Gestión de imágenes",
-            
-            # Mensajes para generación
-            "generando_archivos": "📦 Generando archivos desde HBF...",
-            "archivo_generado": "✅ Archivo generado: {archivo}",
-            
-            # Mensajes para bloques
-            "bloque_actualizado": "✅ Bloque [{bloque}] actualizado",
-            "bloque_no_encontrado": "❌ No se encontró el bloque [{bloque}]",
-            "seleccionar_bloque": "📦 Seleccionar bloque:",
-            "nuevo_contenido": "📝 Nuevo contenido (Enter dos veces para terminar):",
-            
-            # Mensajes para cifrado
-            "clave": "🔑 Clave: ",
-            "confirmar_clave": "🔑 Confirmar clave: ",
-            "archivo_cifrado": "✅ Archivo cifrado: {archivo}",
-            "archivo_descifrado": "✅ Archivo descifrado: {archivo}",
-            "recordar_clave": "💡 Recordá la clave. El archivo original NO fue eliminado.",
-            
-            # Mensajes para exportación
-            "exportar_formato": "📤 Exportar a formato:",
-            "formato_txt": "1. TXT",
-            "formato_json": "2. JSON",
-            "formato_md": "3. MD",
-            "formato_xml": "4. XML",
-            "formato_csv": "5. CSV",
-            "formato_yaml": "6. YAML",
-            "formato_html": "7. HTML",
-            "formato_ini": "8. INI",
-            "formato_toml": "9. TOML",
-            
-            # Mensajes para importación
-            "importar_formato": "📥 Importar desde formato:",
-            "formato_detectado": "🔍 Formato detectado: {formato}",
-        }
-        
-        with open(directorio / "es.json", 'w', encoding='utf-8') as f:
-            json.dump(base, f, indent=2, ensure_ascii=False)
-        
-        # Crear inglés
-        en_base = {
-            "nombre_idioma": "English",
-            "titulo": "📁 HBF - Hybrid Binary Format v3.0",
-            "creado_por": "Created by Lucas Sogaray",
-            "guardado_en": "All files are saved in:",
-            "menu": "What do you want to do?",
-            "cancelar_opcion": "💡 You can type 'exit' in any option to cancel",
-            "recordatorio": "💡 Type the option number (e.g. 1, 2, 3...)",
-            "salir": "👋 Bye! Thanks for using HBF",
-            "archivos_en": "Your files are in:",
-            "error": "❌ Invalid option",
-            "cancelar": "✖️ Operation cancelled",
-            "ruta_actual": "📁 Current base path:",
-            "nueva_ruta": "📁 New base path (leave empty to use Downloads):",
-            "idioma_opciones": "🌍 Select language",
-            "configuracion": "⚙️ Configuration",
-            "no_encontrado": "❌ Not found",
-            "exito": "✅ Success",
-            
-            "opciones": [
-                "📝 Create HBF",
-                "📖 Read HBF",
-                "📥 Import to HBF",
-                "✏️ Edit TEXT",
-                "📋 Edit LISTS",
-                "💬 Edit NOTES",
-                "🔢 Edit NUMERIC",
-                "🏷️ Edit TITLES",
-                "📝 Edit METADATA",
-                "💻 Edit CODE",
-                "🌐 Edit API",
-                "🗄️ Edit SQL",
-                "📦 Edit DEPLOY",
-                "🧪 Edit TEST",
-                "📊 Edit SCHEMA",
-                "🔐 Edit ENV",
-                "⚙️ Edit CONFIG",
-                "📖 Edit DOCS",
-                "⚡ Edit COMMANDS",
-                "🐍 Edit SCRIPTS",
-                "📦 Edit DEPENDENCIES",
-                "🖼️ Manage images",
-                "🖼️ Save binary",
-                "📤 Extract binary",
-                "📤 Export",
-                "🔍 Search",
-                "📂 List HBF",
-                "📊 Statistics",
-                "📜 History",
-                "🔗 Combine HBF",
-                "🔒 Protect with key",
-                "📦 Generate from HBF",
-                "📁 Change base path",
-                "🎨 Colors",
-                "🌍 Change language",
-                "🚪 Exit"
-            ],
-            
-            "imagen_agregada": "✅ Image added successfully",
-            "imagen_extraida": "✅ Image extracted successfully",
-            "imagen_no_encontrada": "❌ Image not found",
-            "imagenes_lista": "📋 Image list",
-            "gestion_imagenes": "🖼️ Image management",
-            
-            "generando_archivos": "📦 Generating files from HBF...",
-            "archivo_generado": "✅ File generated: {archivo}",
-            
-            "bloque_actualizado": "✅ Block [{bloque}] updated",
-            "bloque_no_encontrado": "❌ Block [{bloque}] not found",
-            "seleccionar_bloque": "📦 Select block:",
-            "nuevo_contenido": "📝 New content (Enter twice to finish):",
-            
-            "clave": "🔑 Key: ",
-            "confirmar_clave": "🔑 Confirm key: ",
-            "archivo_cifrado": "✅ File encrypted: {archivo}",
-            "archivo_descifrado": "✅ File decrypted: {archivo}",
-            "recordar_clave": "💡 Remember the key. Original file was NOT deleted.",
-            
-            "exportar_formato": "📤 Export to format:",
-            "formato_txt": "1. TXT",
-            "formato_json": "2. JSON",
-            "formato_md": "3. MD",
-            "formato_xml": "4. XML",
-            "formato_csv": "5. CSV",
-            "formato_yaml": "6. YAML",
-            "formato_html": "7. HTML",
-            "formato_ini": "8. INI",
-            "formato_toml": "9. TOML",
-            
-            "importar_formato": "📥 Import from format:",
-            "formato_detectado": "🔍 Detected format: {formato}",
-        }
-        
-        with open(directorio / "en.json", 'w', encoding='utf-8') as f:
-            json.dump(en_base, f, indent=2, ensure_ascii=False)
-        
-        # Crear portugués
-        pt_base = {
-            "nombre_idioma": "Português",
-            "titulo": "📁 HBF - Hybrid Binary Format v3.0",
-            "creado_por": "Criado por Lucas Sogaray",
-            "guardado_en": "Todos os arquivos são salvos em:",
-            "menu": "O que você quer fazer?",
-            "cancelar_opcion": "💡 Você pode digitar 'sair' em qualquer opção para cancelar",
-            "recordatorio": "💡 Digite o número da opção (ex: 1, 2, 3...)",
-            "salir": "👋 Tchau! Obrigado por usar HBF",
-            "archivos_en": "Seus arquivos estão em:",
-            "error": "❌ Opção inválida",
-            "cancelar": "✖️ Operação cancelada",
-            "ruta_actual": "📁 Caminho base atual:",
-            "nueva_ruta": "📁 Novo caminho base (deixe vazio para usar Downloads):",
-            "idioma_opciones": "🌍 Selecionar idioma",
-            "configuracion": "⚙️ Configuração",
-            "no_encontrado": "❌ Não encontrado",
-            "exito": "✅ Sucesso",
-            
-            "opciones": [
-                "📝 Criar HBF",
-                "📖 Ler HBF",
-                "📥 Importar para HBF",
-                "✏️ Editar TEXTO",
-                "📋 Editar LISTAS",
-                "💬 Editar NOTAS",
-                "🔢 Editar NUMÉRICO",
-                "🏷️ Editar TÍTULOS",
-                "📝 Editar METADADOS",
-                "💻 Editar CODE",
-                "🌐 Editar API",
-                "🗄️ Editar SQL",
-                "📦 Editar DEPLOY",
-                "🧪 Editar TEST",
-                "📊 Editar SCHEMA",
-                "🔐 Editar ENV",
-                "⚙️ Editar CONFIG",
-                "📖 Editar DOCS",
-                "⚡ Editar COMANDOS",
-                "🐍 Editar SCRIPTS",
-                "📦 Editar DEPENDÊNCIAS",
-                "🖼️ Gerenciar imagens",
-                "🖼️ Salvar binário",
-                "📤 Extrair binário",
-                "📤 Exportar",
-                "🔍 Buscar",
-                "📂 Listar HBF",
-                "📊 Estatísticas",
-                "📜 Histórico",
-                "🔗 Combinar HBF",
-                "🔒 Proteger com chave",
-                "📦 Gerar a partir de HBF",
-                "📁 Alterar caminho base",
-                "🎨 Cores",
-                "🌍 Mudar idioma",
-                "🚪 Sair"
-            ],
-            
-            "imagen_agregada": "✅ Imagem adicionada com sucesso",
-            "imagen_extraida": "✅ Imagem extraída com sucesso",
-            "imagen_no_encontrada": "❌ Imagem não encontrada",
-            "imagenes_lista": "📋 Lista de imagens",
-            "gestion_imagenes": "🖼️ Gerenciamento de imagens",
-            
-            "generando_archivos": "📦 Gerando arquivos a partir de HBF...",
-            "archivo_generado": "✅ Arquivo gerado: {archivo}",
-            
-            "bloque_actualizado": "✅ Bloco [{bloque}] atualizado",
-            "bloque_no_encontrado": "❌ Bloco [{bloque}] não encontrado",
-            "seleccionar_bloque": "📦 Selecionar bloco:",
-            "nuevo_contenido": "📝 Novo conteúdo (Enter duas vezes para terminar):",
-            
-            "clave": "🔑 Chave: ",
-            "confirmar_clave": "🔑 Confirmar chave: ",
-            "archivo_cifrado": "✅ Arquivo criptografado: {archivo}",
-            "archivo_descifrado": "✅ Arquivo descriptografado: {archivo}",
-            "recordar_clave": "💡 Lembre-se da chave. O arquivo original NÃO foi excluído.",
-            
-            "exportar_formato": "📤 Exportar para formato:",
-            "formato_txt": "1. TXT",
-            "formato_json": "2. JSON",
-            "formato_md": "3. MD",
-            "formato_xml": "4. XML",
-            "formato_csv": "5. CSV",
-            "formato_yaml": "6. YAML",
-            "formato_html": "7. HTML",
-            "formato_ini": "8. INI",
-            "formato_toml": "9. TOML",
-            
-            "importar_formato": "📥 Importar do formato:",
-            "formato_detectado": "🔍 Formato detectado: {formato}",
-        }
-        
-        with open(directorio / "pt.json", 'w', encoding='utf-8') as f:
-            json.dump(pt_base, f, indent=2, ensure_ascii=False)
-    
-    def detectar_idioma(self):
-        """Detecta el idioma del sistema"""
-        try:
-            idioma = locale.getlocale()[0]
-            if idioma:
-                codigos = {
-                    "es": "es", "pt": "pt", "en": "en",
-                    "fr": "fr", "de": "de", "it": "it",
-                    "ja": "ja", "zh": "zh", "ru": "ru"
-                }
-                for key, value in codigos.items():
-                    if idioma.startswith(key):
-                        return value
-            return "en"
-        except:
-            return "en"
-    
-    def get(self, clave, **kwargs):
-        """Obtiene una traducción con formato"""
-        texto = self.idiomas.get(self.idioma_actual, {}).get(clave, clave)
-        if kwargs:
-            return texto.format(**kwargs)
-        return texto
-    
-    def opciones(self):
-        """Retorna la lista de opciones del menú"""
-        return self.get('opciones')
-    
-    def elegir_idioma(self):
-        """Muestra menú para elegir idioma"""
-        print("\n" + "=" * 48)
-        print(f"  {self.get('idioma_opciones')}")
-        print("=" * 48)
-        
-        disponibles = sorted(self.idiomas.keys())
-        for i, codigo in enumerate(disponibles, 1):
-            nombre = self.idiomas[codigo].get('nombre_idioma', codigo.upper())
-            print(f"  {i}. {nombre}")
-        
-        print("=" * 48)
-        opcion = input("  👉 Opción: ")
-        
-        try:
-            idx = int(opcion) - 1
-            if 0 <= idx < len(disponibles):
-                self.idioma_actual = disponibles[idx]
-                config["idioma"] = self.idioma_actual
-                guardar_config(config)
-                return
-        except:
-            pass
-        
-        self.idioma_actual = self.detectar_idioma()
-        config["idioma"] = self.idioma_actual
-        guardar_config(config)
-
-    def obtener_todos_los_idiomas(self):        return {...}
-    """Retorna TODOS los idiomas embebidos en el código"""
-    return {
-        "es": self.idioma_es(),
-        "en": self.idioma_en(),
-        "pt": self.idioma_pt(),
-        "fr": self.idioma_fr(),
-        "de": self.idioma_de(),
-        "it": self.idioma_it(),
-        "ja": self.idioma_ja(),
-        "zh": self.idioma_zh(),
-        "ru": self.idioma_ru(),
-        "ko": self.idioma_ko(),
-        "ar": self.idioma_ar(),
-        "hi": self.idioma_hi()
-    }
 
 # Instancia global del traductor
 T = HBFTranslator()
@@ -651,14 +449,36 @@ def listar_hbf():
 def parsear_atributos(bloque):
     """Parsea atributos de un bloque [BLOQUE:atributo=valor,otro=valor]"""
     atributos = {}
-    match = re.search(r'\[([A-Z]+)\]', str(line))
+    match = re.search(r'\[[A-Z]+:([^\]]*)\]', bloque)
+    if match:
+        for par in match.group(1).split(','):
+            if '=' in par:
+                clave, valor = par.split('=', 1)
+                atributos[clave.strip()] = valor.strip()
+    return atributos
+
+
+def obtener_bloques(contenido):
+    """Parsea el contenido de un .hbf y devuelve {NOMBRE_BLOQUE: [{'contenido': str, 'atributos': dict}, ...]}"""
+    encontrados = re.findall(
+        r'\[([A-Z]+)(:[^\]]*)?\]\n(.*?)(?=\n\[[A-Z]+(?::[^\]]*)?\]|\n\[FIN\]|\Z)',
+        contenido, re.DOTALL
+    )
+    bloques = {}
+    for nombre, attrs_raw, valor in encontrados:
+        atributos = parsear_atributos(f'[{nombre}{attrs_raw}]') if attrs_raw else {}
+        bloques.setdefault(nombre, []).append({
+            'contenido': valor.strip(),
+            'atributos': atributos
+        })
+    return bloques
 
 # ====================
 # FUNCIONES PARA BLOQUES ESPECIALIZADOS
 # ====================
 
 def editar_bloque_especializado(archivo, bloque, atributos_extra=None):
-    """Edita un bloque especializado con atributos"""
+    """Edita (o crea si no existe) un bloque especializado con atributos"""
     archivo = obtener_ruta(archivo)
     if not os.path.exists(archivo):
         error("El archivo no existe")
@@ -668,17 +488,15 @@ def editar_bloque_especializado(archivo, bloque, atributos_extra=None):
         contenido = f.read()
     
     # Buscar el bloque
-    patron = r'(\[' + bloque + r'(?::[^\]]*)?\]\n).*?(\n\n|\[)'
+    patron = r'(\[' + bloque + r'(?::[^\]]*)?\]\n).*?(?=\n\n|\n\[|\Z)'
     match = re.search(patron, contenido, re.DOTALL)
     
-    if not match:
-        error(T.get('bloque_no_encontrado', bloque=bloque))
-        return
-    
-    # Obtener atributos actuales
-    attrs = parsear_atributos(match.group(1))
-    
-    print(f"\n   📝  EDITANDO BLOQUE [{bloque}]")
+    attrs = {}
+    if match:
+        attrs = parsear_atributos(match.group(1))
+        print(f"\n   📝  EDITANDO BLOQUE [{bloque}]")
+    else:
+        print(f"\n   📝  CREANDO BLOQUE [{bloque}] (no existía en este archivo)")
     print("   " + "=" * 48)
     
     if attrs:
@@ -714,10 +532,16 @@ def editar_bloque_especializado(archivo, bloque, atributos_extra=None):
     else:
         nuevo_bloque = f"[{bloque}]\n"
     
-    nuevo_bloque += nuevo_contenido + "\n\n"
+    nuevo_bloque += nuevo_contenido + "\n"
     
-    # Reemplazar en el archivo
-    nuevo_archivo = re.sub(patron, nuevo_bloque, contenido, flags=re.DOTALL)
+    if match:
+        # Reemplazar solo el tramo encontrado, preservando lo que venga después
+        nuevo_archivo = contenido[:match.start()] + nuevo_bloque + contenido[match.end():]
+    elif '[FIN]' in contenido:
+        # Insertar el bloque nuevo justo antes de [FIN]
+        nuevo_archivo = contenido.replace('[FIN]', nuevo_bloque + '\n[FIN]', 1)
+    else:
+        nuevo_archivo = contenido.rstrip('\n') + '\n\n' + nuevo_bloque
     
     with open(archivo, 'w', encoding='utf-8') as f:
         f.write(nuevo_archivo)
@@ -1235,7 +1059,7 @@ def info_imagen():
             }
             
             for label, key in campos.items():
-                match = re.search(f'{key}:\s*(.+)', bloque)
+                match = re.search(rf'{key}:\s*(.+)', bloque)
                 if match:
                     print(f"   {label}: {match.group(1).strip()}")
             
@@ -1416,7 +1240,7 @@ def estadisticas_avanzadas():
     
     # Contar imágenes
     imagenes = len(bloques.get('IMAGEN', []))
-    total_imagenes_size = sum(tam_bloques.get('IMAGEN', 0))
+    total_imagenes_size = tam_bloques.get('IMAGEN', 0)
     
     print(f"\n   📊  ESTADÍSTICAS DE {os.path.basename(archivo)}")
     print("   " + "=" * 60)
@@ -1635,7 +1459,7 @@ def editar_bloque_general(archivo, bloque):
         contenido = f.read()
     
     # Buscar el bloque
-    patron = r'(\[' + bloque + r'(?::[^\]]*)?\]\n).*?(\n\n|\[)'
+    patron = r'(\[' + bloque + r'(?::[^\]]*)?\]\n).*?(?=\n\n|\n\[|\Z)'
     match = re.search(patron, contenido, re.DOTALL)
     
     if not match:
@@ -1657,8 +1481,9 @@ def editar_bloque_general(archivo, bloque):
     
     nuevo_contenido = "\n".join(lineas)
     
-    # Reemplazar en el archivo
-    nuevo_archivo = re.sub(patron, r'\1' + nuevo_contenido + r'\n\n', contenido, flags=re.DOTALL)
+    # Reemplazar solo el tramo encontrado, preservando lo que venga después
+    nuevo_bloque = match.group(1) + nuevo_contenido + "\n"
+    nuevo_archivo = contenido[:match.start()] + nuevo_bloque + contenido[match.end():]
     
     with open(archivo, 'w', encoding='utf-8') as f:
         f.write(nuevo_archivo)
@@ -1734,12 +1559,13 @@ def editar_metadatos():
         if nuevo_valor.strip():
             metadatos[key] = nuevo_valor
     
-    nuevo_contenido = re.sub(
-        r'(\[METADATOS\]\n).*?(\n\n|\[)',
-        r'\1' + json.dumps(metadatos, indent=2) + r'\n\n',
-        contenido,
-        flags=re.DOTALL
-    )
+    patron_metadatos = r'(\[METADATOS\]\n).*?(?=\n\n|\n\[|\Z)'
+    match_metadatos = re.search(patron_metadatos, contenido, re.DOTALL)
+    if not match_metadatos:
+        error("No se encontró el bloque [METADATOS]")
+        return
+    nuevo_bloque_metadatos = match_metadatos.group(1) + json.dumps(metadatos, indent=2) + "\n"
+    nuevo_contenido = contenido[:match_metadatos.start()] + nuevo_bloque_metadatos + contenido[match_metadatos.end():]
     
     with open(archivo, 'w', encoding='utf-8') as f:
         f.write(nuevo_contenido)
@@ -2257,6 +2083,10 @@ def combinar_hbf():
         contenido2 = f.read()
     bloques1 = re.findall(r'(\[[A-Z]+(?::[^\]]*)?\]\n.*?)(?=\n\[[A-Z]+(?::[^\]]+)?\]|\n\[FIN\]|$)', contenido1, re.DOTALL)
     bloques2 = re.findall(r'(\[[A-Z]+(?::[^\]]*)?\]\n.*?)(?=\n\[[A-Z]+(?::[^\]]+)?\]|\n\[FIN\]|$)', contenido2, re.DOTALL)
+    # Los marcadores [HBF] (cabecera) y [FIN] (cierre) no son bloques de contenido:
+    # se recrean una sola vez al combinar, así que se excluyen para no duplicarlos.
+    bloques1 = [b for b in bloques1 if not b.startswith('[HBF]') and not b.startswith('[FIN]')]
+    bloques2 = [b for b in bloques2 if not b.startswith('[HBF]') and not b.startswith('[FIN]')]
     if orden == "1":
         combinado = "\n".join(bloques1) + "\n" + "\n".join(bloques2)
     else:
