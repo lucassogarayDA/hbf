@@ -1,59 +1,441 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HBF - Hybrid Binary Format</title>
-    <meta name="description" content="HBF es un formato de archivo todo en uno que combina texto, binario, metadatos, listas y más. Instalación con pip install hbf-hyper.">
-    <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #0d1117; color: #c9d1d9; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .container { max-width: 800px; padding: 40px 20px; text-align: center; }
-        h1 { font-size: 3em; color: #58a6ff; margin-bottom: 10px; }
-        .subtitle { font-size: 1.2em; color: #8b949e; margin-bottom: 30px; }
-        .badge { display: inline-block; background: #238636; color: white; padding: 8px 16px; border-radius: 20px; font-size: 0.9em; margin-bottom: 30px; }
-        .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin: 30px 0; text-align: left; }
-        .feature { background: #161b22; padding: 15px; border-radius: 8px; border-left: 4px solid #58a6ff; }
-        .feature strong { display: block; color: #58a6ff; }
-        .install { background: #161b22; padding: 20px; border-radius: 8px; margin: 20px 0; font-family: monospace; font-size: 1.1em; border: 1px solid #30363d; }
-        .btn { display: inline-block; background: #238636; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; margin: 5px; }
-        .btn:hover { background: #2ea043; }
-        .btn-secondary { background: #1f6feb; }
-        .btn-secondary:hover { background: #388bfd; }
-        .footer { margin-top: 40px; color: #8b949e; font-size: 0.9em; }
-        a { color: #58a6ff; text-decoration: none; }
-        a:hover { text-decoration: underline; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HBF — Hybrid Binary Format</title>
+<meta name="description" content="HBF es un formato de archivo que combina texto, binario, metadatos, listas y más en un solo .hbf. Instalación con pip install hbf-hyper.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,400;8..144,500;8..144,600;8..144,700;8..144,800&family=Roboto+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --primary:#4550E5;
+    --primary-container:#EEEDFB;
+    --on-primary-container:#2E33A8;
+    --surface:#FFFFFF;
+    --surface-container:#F4F2FA;
+    --surface-container-hover:#ECE9F7;
+    --on-surface:#1B1B21;
+    --on-surface-variant:#5C5C68;
+    --outline:#DEDCE8;
+    --success-container:#DCF3E1;
+    --on-success-container:#146C2E;
+    --code-surface:#1B1B27;
+    --code-on-surface:#D9D8E8;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    font-family:'Roboto Flex', system-ui, sans-serif;
+    font-optical-sizing:auto;
+    background:var(--surface);
+    color:var(--on-surface);
+    -webkit-font-smoothing:antialiased;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;}
+  }
+
+  .wrap{max-width:920px; margin:0 auto; padding:0 24px;}
+
+  /* ---------- Top bar ---------- */
+  header.topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:20px 0;
+  }
+  .topbar .wrap{display:flex; align-items:center; justify-content:space-between; width:100%;}
+  .brand{display:flex; align-items:center; gap:10px; font-weight:700; font-size:1.05rem;}
+  .brand .mark{
+    width:34px; height:34px; border-radius:10px;
+    background:var(--primary);
+    display:flex; align-items:center; justify-content:center;
+    color:white; font-size:1.05rem; font-weight:800;
+  }
+  .top-links{display:flex; gap:8px;}
+  .top-links a{
+    color:var(--on-surface-variant); text-decoration:none;
+    font-size:0.92rem; font-weight:500;
+    padding:8px 14px; border-radius:20px;
+  }
+  .top-links a:hover{background:var(--surface-container); color:var(--on-surface);}
+
+  /* ---------- Hero ---------- */
+  .hero{padding:56px 0 40px;}
+  .eyebrow-badge{
+    display:inline-flex; align-items:center; gap:6px;
+    background:var(--success-container); color:var(--on-success-container);
+    padding:6px 14px; border-radius:20px; font-size:0.85rem; font-weight:600;
+    margin-bottom:20px;
+  }
+  h1{
+    font-size:clamp(2.4rem, 5vw, 3.6rem);
+    line-height:1.05;
+    font-weight:800;
+    letter-spacing:-0.02em;
+    margin:0 0 16px;
+    max-width:14ch;
+  }
+  .lede{
+    font-size:1.15rem;
+    color:var(--on-surface-variant);
+    max-width:52ch;
+    line-height:1.55;
+    margin:0 0 28px;
+  }
+  .cta-row{display:flex; flex-wrap:wrap; gap:12px; margin-bottom:48px;}
+  .btn{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:12px 22px; border-radius:24px;
+    font-weight:600; font-size:0.98rem;
+    text-decoration:none; border:1px solid transparent;
+    transition:background 0.15s ease, transform 0.1s ease;
+  }
+  .btn:active{transform:scale(0.98);}
+  .btn-primary{background:var(--primary); color:white;}
+  .btn-primary:hover{background:#3841c4;}
+  .btn-outline{border-color:var(--outline); color:var(--on-surface);}
+  .btn-outline:hover{background:var(--surface-container);}
+
+  /* ---------- Demo hbf panel ---------- */
+  .demo{
+    background:var(--code-surface);
+    color:var(--code-on-surface);
+    border-radius:20px;
+    padding:26px 28px;
+    font-family:'Roboto Mono', monospace;
+    font-size:0.88rem;
+    line-height:1.85;
+    overflow-x:auto;
+  }
+  .demo .tag{color:#8AB4FF; font-weight:600;}
+  .demo .attr{color:#F2C879;}
+  .demo .comment{color:#7A7A8C;}
+  .demo .str{color:#9CD67D;}
+
+  /* ---------- Sections ---------- */
+  section{padding:40px 0;}
+  .section-head{margin-bottom:20px;}
+  .section-title{font-size:1.5rem; font-weight:700; margin:0 0 6px; letter-spacing:-0.01em;}
+  .section-sub{color:var(--on-surface-variant); margin:0; font-size:1rem; max-width:60ch;}
+
+  /* ---------- Accordion ---------- */
+  .accordion{
+    border:1px solid var(--outline);
+    border-radius:20px;
+    overflow:hidden;
+  }
+  .acc-item{border-bottom:1px solid var(--outline);}
+  .acc-item:last-child{border-bottom:none;}
+  .acc-trigger{
+    width:100%; display:flex; align-items:center; gap:16px;
+    background:var(--surface); border:none; cursor:pointer;
+    padding:18px 20px; text-align:left; font-family:inherit;
+  }
+  .acc-trigger:hover{background:var(--surface-container);}
+  .acc-icon{
+    width:40px; height:40px; border-radius:12px;
+    background:var(--primary-container); color:var(--on-primary-container);
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.15rem; flex-shrink:0;
+  }
+  .acc-title{flex:1; min-width:0;}
+  .acc-title strong{display:block; font-size:1rem; font-weight:600;}
+  .acc-title span{display:block; font-size:0.88rem; color:var(--on-surface-variant); margin-top:2px;}
+  .acc-chevron{
+    flex-shrink:0; color:var(--on-surface-variant);
+    transition:transform 0.25s ease;
+  }
+  .acc-item.open .acc-chevron{transform:rotate(180deg);}
+  .acc-panel{
+    max-height:0; overflow:hidden;
+    transition:max-height 0.3s ease;
+    background:var(--surface-container);
+  }
+  .acc-panel-inner{
+    padding:0 20px 20px 76px;
+    font-size:0.93rem; color:var(--on-surface); line-height:1.6;
+  }
+  .acc-panel-inner code{
+    background:var(--surface); border:1px solid var(--outline);
+    padding:1px 6px; border-radius:6px; font-family:'Roboto Mono', monospace; font-size:0.85rem;
+  }
+
+  /* ---------- Install ---------- */
+  .install-box{
+    display:flex; align-items:center; justify-content:space-between; gap:16px;
+    background:var(--surface-container);
+    border:1px solid var(--outline);
+    border-radius:16px;
+    padding:16px 18px;
+    font-family:'Roboto Mono', monospace;
+    font-size:0.95rem;
+  }
+  .copy-btn{
+    background:var(--surface); border:1px solid var(--outline);
+    border-radius:10px; padding:8px 14px; cursor:pointer;
+    font-family:'Roboto Flex', sans-serif; font-size:0.85rem; font-weight:600;
+    color:var(--on-surface); flex-shrink:0;
+    transition:background 0.15s ease;
+  }
+  .copy-btn:hover{background:var(--surface-container-hover);}
+  .copy-btn.copied{background:var(--success-container); color:var(--on-success-container); border-color:transparent;}
+
+  /* ---------- Footer ---------- */
+  footer{padding:40px 0 60px; border-top:1px solid var(--outline); margin-top:20px;}
+  footer .wrap{display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px;}
+  footer p{color:var(--on-surface-variant); font-size:0.9rem; margin:0;}
+  footer a{color:var(--on-surface-variant);}
+
+  :focus-visible{outline:2px solid var(--primary); outline-offset:2px;}
+
+  @media (max-width:640px){
+    .acc-panel-inner{padding-left:20px;}
+    .install-box{flex-direction:column; align-items:stretch;}
+  }
+</style>
 </head>
 <body>
-    <div class="container">
-        <h1>📁 HBF</h1>
-        <div class="subtitle">Hybrid Binary Format — El formato que reemplaza a todos los demás</div>
-        <div class="badge">⭐ ️Open Source · MIT</div>
 
-        <div class="features">
-            <div class="feature"><strong>📝 Texto</strong>Contenido principal</div>
-            <div class="feature"><strong>📊 Metadatos</strong>Título, autor, fecha</div>
-            <div class="feature"><strong>🖼️ Binario</strong>Imágenes y archivos</div>
-            <div class="feature"><strong>📋 Listas</strong>Estructuras jerárquicas</div>
-            <div class="feature"><strong>🔢 Numérico</strong>Datos estructurados</div>
-            <div class="feature"><strong>🔒 Cifrado</strong>Protección con contraseña</div>
-            <div class="feature"><strong>📤 Exportar</strong>9 formatos diferentes</div>
-            <div class="feature"><strong>📥 Importar</strong>9 formatos diferentes</div>
-            <div class="feature"><strong>🌍 12 idiomas</strong>Traducción automática</div>
-            <div class="feature"><strong>🖥️ Multiplataforma</strong>Termux, Linux, Windows</div>
-        </div>
-
-        <h2>⚡ Instalación</h2>
-        <div class="install">pip install hbf-hyper</div>
-
-        <div>
-            <a href="https://github.com/lucassogarayDA/hbf" class="btn">GitHub</a>
-            <a href="https://pypi.org/project/hbf-hyper/" class="btn btn-secondary">PyPI</a>
-        </div>
-
-        <div class="footer">
-            Creado por <a href="https://github.com/lucassogarayDA">Lucas Sogaray</a> · 2026
-        </div>
+<header class="topbar">
+  <div class="wrap">
+    <div class="brand"><span class="mark">H</span> HBF</div>
+    <div class="top-links">
+      <a href="https://github.com/lucassogarayDA/hbf">GitHub</a>
+      <a href="https://pypi.org/project/hbf-hyper/">PyPI</a>
     </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="hero">
+    <span class="eyebrow-badge">Open source · MIT</span>
+    <h1>Un archivo. Todo tu contenido.</h1>
+    <p class="lede">HBF guarda texto, binario, metadatos, listas y bloques especializados en un solo formato de texto plano, editable desde una terminal.</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="#instalacion">Instalar</a>
+      <a class="btn btn-outline" href="https://github.com/lucassogarayDA/hbf">Ver el código</a>
+    </div>
+
+    <div class="demo" aria-label="Ejemplo de contenido de un archivo .hbf">
+<span class="comment"># nota.hbf</span>
+<span class="tag">[METADATOS]</span>
+{"titulo": "Apuntes", "autor": "vos"}
+
+<span class="tag">[TEXTO]</span>
+Esto es contenido normal, como una nota cualquiera.
+
+<span class="tag">[CODE</span><span class="attr">:language=python</span><span class="tag">]</span>
+print(<span class="str">"hola desde un bloque de código"</span>)
+
+<span class="tag">[FIN]</span>
+    </div>
+  </section>
+
+  <section id="detalle">
+    <div class="section-head">
+      <h2 class="section-title">Qué guarda un .hbf</h2>
+      <p class="section-sub">Cada bloque cumple un rol distinto dentro del mismo archivo. Tocá cualquiera para ver el detalle.</p>
+    </div>
+
+    <div class="accordion" id="accordion">
+
+      <div class="acc-item">
+        <button class="acc-trigger" aria-expanded="false">
+          <span class="acc-icon">📝</span>
+          <span class="acc-title"><strong>Texto</strong><span>Contenido principal</span></span>
+          <span class="acc-chevron">⌄</span>
+        </button>
+        <div class="acc-panel">
+          <div class="acc-panel-inner">
+            El bloque <code>[TEXTO]</code> guarda contenido de texto libre: notas, párrafos, secciones completas. Es el bloque más simple del formato y el que arranca en cualquier archivo nuevo.
+          </div>
+        </div>
+      </div>
+
+      <div class="acc-item">
+        <button class="acc-trigger" aria-expanded="false">
+          <span class="acc-icon">📊</span>
+          <span class="acc-title"><strong>Metadatos</strong><span>Título, autor, fecha</span></span>
+          <span class="acc-chevron">⌄</span>
+        </button>
+        <div class="acc-panel">
+          <div class="acc-panel-inner">
+            El bloque <code>[METADATOS]</code> guarda un objeto JSON con información estructurada del archivo: título, autor y fecha de creación. Se edita como cualquier otro bloque, sin tocar el resto del archivo.
+          </div>
+        </div>
+      </div>
+
+      <div class="acc-item">
+        <button class="acc-trigger" aria-expanded="false">
+          <span class="acc-icon">🖼️</span>
+          <span class="acc-title"><strong>Binario</strong><span>Imágenes y archivos</span></span>
+          <span class="acc-chevron">⌄</span>
+        </button>
+        <div class="acc-panel">
+          <div class="acc-panel-inner">
+            Guarda imágenes y otros archivos binarios codificados en base64 dentro del bloque <code>[IMAGEN]</code>, junto con hash, dimensiones y formato. También se puede guardar y extraer cualquier archivo binario suelto como bloque independiente.
+          </div>
+        </div>
+      </div>
+
+      <div class="acc-item">
+        <button class="acc-trigger" aria-expanded="false">
+          <span class="acc-icon">📋</span>
+          <span class="acc-title"><strong>Listas</strong><span>Estructuras simples</span></span>
+          <span class="acc-chevron">⌄</span>
+        </button>
+        <div class="acc-panel">
+          <div class="acc-panel-inner">
+            El bloque <code>[LISTAS]</code> organiza elementos línea por línea, pensado para tareas, pasos o ítems sueltos, en el mismo formato de texto plano que el resto del archivo.
+          </div>
+        </div>
+      </div>
+
+      <div class="acc-item">
+        <button class="acc-trigger" aria-expanded="false">
+          <span class="acc-icon">🔢</span>
+          <span class="acc-title"><strong>Numérico</strong><span>Datos estructurados</span></span>
+          <span class="acc-chevron">⌄</span>
+        </button>
+        <div class="acc-panel">
+          <div class="acc-panel-inner">
+            El bloque <code>[NUMERICO]</code> guarda arrays y estructuras de datos numéricos en formato JSON, útil para series de datos chicas que no ameritan un archivo aparte.
+          </div>
+        </div>
+      </div>
+
+      <div class="acc-item">
+        <button class="acc-trigger" aria-expanded="false">
+          <span class="acc-icon">🔒</span>
+          <span class="acc-title"><strong>Cifrado</strong><span>Protección con clave</span></span>
+          <span class="acc-chevron">⌄</span>
+        </button>
+        <div class="acc-panel">
+          <div class="acc-panel-inner">
+            Cifra el archivo completo con Fernet (AES-128 simétrico) usando una clave derivada de tu contraseña vía PBKDF2-HMAC-SHA256 con 100.000 iteraciones. Genera un archivo <code>.enc</code> aparte; el original no se borra automáticamente. Requiere la librería <code>cryptography</code>.
+          </div>
+        </div>
+      </div>
+
+      <div class="acc-item">
+        <button class="acc-trigger" aria-expanded="false">
+          <span class="acc-icon">📤</span>
+          <span class="acc-title"><strong>Exportar</strong><span>9 formatos distintos</span></span>
+          <span class="acc-chevron">⌄</span>
+        </button>
+        <div class="acc-panel">
+          <div class="acc-panel-inner">
+            Convierte un .hbf a TXT, JSON, MD, XML, CSV, YAML, HTML, INI o TOML, según lo que necesites para llevarte el contenido a otra herramienta.
+          </div>
+        </div>
+      </div>
+
+      <div class="acc-item">
+        <button class="acc-trigger" aria-expanded="false">
+          <span class="acc-icon">📥</span>
+          <span class="acc-title"><strong>Importar</strong><span>9 formatos distintos</span></span>
+          <span class="acc-chevron">⌄</span>
+        </button>
+        <div class="acc-panel">
+          <div class="acc-panel-inner">
+            Detecta el formato por extensión y convierte a .hbf archivos TXT, JSON, XML, YAML, TOML, INI, CSV, MD o HTML, para empezar a usar HBF con contenido que ya tenías en otro lado.
+          </div>
+        </div>
+      </div>
+
+      <div class="acc-item">
+        <button class="acc-trigger" aria-expanded="false">
+          <span class="acc-icon">🌍</span>
+          <span class="acc-title"><strong>Idiomas</strong><span>12 disponibles</span></span>
+          <span class="acc-chevron">⌄</span>
+        </button>
+        <div class="acc-panel">
+          <div class="acc-panel-inner">
+            La interfaz detecta automáticamente el idioma del sistema entre 12 opciones. Español, inglés y portugués tienen traducción completa; el resto usa español como respaldo mientras se van completando.
+          </div>
+        </div>
+      </div>
+
+      <div class="acc-item">
+        <button class="acc-trigger" aria-expanded="false">
+          <span class="acc-icon">🖥️</span>
+          <span class="acc-title"><strong>Multiplataforma</strong><span>Termux, Linux, Windows</span></span>
+          <span class="acc-chevron">⌄</span>
+        </button>
+        <div class="acc-panel">
+          <div class="acc-panel-inner">
+            Un mismo código detecta el sistema operativo y se adapta: pensado para Termux en Android, y funcional también en Linux y Windows.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section id="instalacion">
+    <div class="section-head">
+      <h2 class="section-title">Instalación</h2>
+      <p class="section-sub">Requiere Python. El cifrado necesita además la librería <code>cryptography</code>.</p>
+    </div>
+    <div class="install-box">
+      <span id="install-cmd">pip install hbf-hyper</span>
+      <button class="copy-btn" id="copy-btn">Copiar</button>
+    </div>
+  </section>
+</div>
+
+<footer>
+  <div class="wrap">
+    <p>Creado por <a href="https://github.com/lucassogarayDA">Lucas Sogaray</a> · 2026</p>
+    <p><a href="https://pypi.org/project/hbf-hyper/">hbf-hyper en PyPI</a></p>
+  </div>
+</footer>
+
+<script>
+  document.querySelectorAll('.acc-trigger').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var item = btn.closest('.acc-item');
+      var panel = item.querySelector('.acc-panel');
+      var isOpen = item.classList.contains('open');
+
+      // cerrar los demás
+      document.querySelectorAll('.acc-item.open').forEach(function(openItem){
+        if(openItem !== item){
+          openItem.classList.remove('open');
+          openItem.querySelector('.acc-panel').style.maxHeight = null;
+          openItem.querySelector('.acc-trigger').setAttribute('aria-expanded', 'false');
+        }
+      });
+
+      if(isOpen){
+        item.classList.remove('open');
+        panel.style.maxHeight = null;
+        btn.setAttribute('aria-expanded', 'false');
+      } else {
+        item.classList.add('open');
+        panel.style.maxHeight = panel.scrollHeight + 'px';
+        btn.setAttribute('aria-expanded', 'true');
+      }
+    });
+  });
+
+  document.getElementById('copy-btn').addEventListener('click', function(){
+    var text = document.getElementById('install-cmd').textContent;
+    navigator.clipboard.writeText(text).then(function(){
+      var btn = document.getElementById('copy-btn');
+      var original = btn.textContent;
+      btn.textContent = 'Copiado';
+      btn.classList.add('copied');
+      setTimeout(function(){
+        btn.textContent = original;
+        btn.classList.remove('copied');
+      }, 1500);
+    });
+  });
+</script>
+
 </body>
 </html>
+
