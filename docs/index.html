@@ -386,6 +386,18 @@ print(<span class="str">"hola desde un bloque de código"</span>)
   </section>
 </div>
 
+<section id="lector">
+  <div class="section-head">
+    <h2 class="section-title">📂 Probar HBF</h2>
+    <p class="section-sub">Subí un archivo .hbf y mirá su contenido en vivo.</p>
+  </div>
+  <div style="border:2px dashed var(--outline); border-radius:16px; padding:30px; text-align:center; background:var(--surface-container);">
+    <input type="file" id="fileInput" accept=".hbf" style="display:none;">
+    <button class="btn btn-primary" id="uploadBtn">Seleccionar archivo .hbf</button>
+    <div id="output" style="margin-top:20px; text-align:left; background:var(--code-surface); color:var(--code-on-surface); border-radius:12px; padding:20px; font-family:monospace; white-space:pre-wrap; word-break:break-word; max-height:400px; overflow-y:auto; display:none;"></div>
+  </div>
+</section>
+
 <footer>
   <div class="wrap">
     <p>Creado por <a href="https://github.com/lucassogarayDA">Lucas Sogaray</a> · 2026</p>
@@ -433,6 +445,23 @@ print(<span class="str">"hola desde un bloque de código"</span>)
         btn.classList.remove('copied');
       }, 1500);
     });
+  });
+
+  document.getElementById('uploadBtn').addEventListener('click', function() {
+    document.getElementById('fileInput').click();
+  });
+
+  document.getElementById('fileInput').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(event) {
+      const contenido = event.target.result;
+      const output = document.getElementById('output');
+      output.textContent = contenido;
+      output.style.display = 'block';
+    };
+    reader.readAsText(file);
   });
 </script>
 
