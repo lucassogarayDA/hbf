@@ -5,6 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>HBF — Hybrid Binary Format</title>
 <meta name="description" content="HBF es un formato de archivo que combina texto, binario, metadatos, listas y más en un solo .hbf. Instalación con pip install hbf-hyper.">
+<script>
+  (function(){
+    var stored = localStorage.getItem('hbf-theme');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if(stored === 'dark' || (!stored && prefersDark)){
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
+  })();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,400;8..144,500;8..144,600;8..144,700;8..144,800&family=Roboto+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -23,6 +32,23 @@
     --on-success-container:#146C2E;
     --code-surface:#1B1B27;
     --code-on-surface:#D9D8E8;
+    color-scheme: light;
+  }
+  html[data-theme="dark"]{
+    --primary:#B4B8FF;
+    --primary-container:#32379B;
+    --on-primary-container:#E4E3FF;
+    --surface:#131318;
+    --surface-container:#1D1D25;
+    --surface-container-hover:#26262F;
+    --on-surface:#EAEAF0;
+    --on-surface-variant:#A6A5B3;
+    --outline:#38384A;
+    --success-container:#173C29;
+    --on-success-container:#8CE3B0;
+    --code-surface:#0D0D12;
+    --code-on-surface:#D9D8E8;
+    color-scheme: dark;
   }
   *{box-sizing:border-box;}
   html{scroll-behavior:smooth;}
@@ -33,6 +59,7 @@
     background:var(--surface);
     color:var(--on-surface);
     -webkit-font-smoothing:antialiased;
+    transition:background 0.2s ease, color 0.2s ease;
   }
   @media (prefers-reduced-motion: reduce){
     *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;}
@@ -44,30 +71,56 @@
   header.topbar{
     display:flex; align-items:center; justify-content:space-between;
     padding:20px 0;
+    position:sticky; top:0; z-index:10;
+    background:color-mix(in srgb, var(--surface) 88%, transparent);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid transparent;
   }
+  header.topbar.scrolled{border-bottom-color:var(--outline);}
   .topbar .wrap{display:flex; align-items:center; justify-content:space-between; width:100%;}
-  .brand{display:flex; align-items:center; gap:10px; font-weight:700; font-size:1.05rem;}
+  .brand{display:flex; align-items:center; gap:10px; font-weight:700; font-size:1.05rem; color:var(--on-surface); text-decoration:none;}
   .brand .mark{
     width:34px; height:34px; border-radius:10px;
-    background:var(--primary);
+    flex-shrink:0;
     display:flex; align-items:center; justify-content:center;
-    color:white; font-size:1.05rem; font-weight:800;
+    overflow:hidden;
   }
-  .top-links{display:flex; gap:8px;}
+  .brand .mark svg{width:100%; height:100%; display:block;}
+  .top-links{display:flex; align-items:center; gap:4px;}
   .top-links a{
     color:var(--on-surface-variant); text-decoration:none;
     font-size:0.92rem; font-weight:500;
     padding:8px 14px; border-radius:20px;
   }
   .top-links a:hover{background:var(--surface-container); color:var(--on-surface);}
+  .theme-toggle{
+    display:flex; align-items:center; justify-content:center;
+    width:38px; height:38px; border-radius:50%;
+    background:transparent; border:1px solid var(--outline);
+    color:var(--on-surface-variant); cursor:pointer;
+    margin-left:6px;
+    transition:background 0.15s ease, color 0.15s ease;
+  }
+  .theme-toggle:hover{background:var(--surface-container); color:var(--on-surface);}
+  .theme-toggle svg{width:18px; height:18px;}
+  .theme-toggle .icon-moon{display:none;}
+  html[data-theme="dark"] .theme-toggle .icon-sun{display:none;}
+  html[data-theme="dark"] .theme-toggle .icon-moon{display:block;}
 
   /* ---------- Hero ---------- */
   .hero{padding:56px 0 40px;}
+  .badge-row{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:20px;}
   .eyebrow-badge{
     display:inline-flex; align-items:center; gap:6px;
     background:var(--success-container); color:var(--on-success-container);
     padding:6px 14px; border-radius:20px; font-size:0.85rem; font-weight:600;
-    margin-bottom:20px;
+  }
+  .version-badge{
+    display:inline-flex; align-items:center; gap:6px;
+    background:var(--surface-container); color:var(--on-surface-variant);
+    border:1px solid var(--outline);
+    padding:6px 14px; border-radius:20px; font-size:0.85rem; font-weight:600;
+    font-family:'Roboto Mono', monospace;
   }
   h1{
     font-size:clamp(2.4rem, 5vw, 3.6rem);
@@ -93,8 +146,9 @@
     transition:background 0.15s ease, transform 0.1s ease;
   }
   .btn:active{transform:scale(0.98);}
-  .btn-primary{background:var(--primary); color:white;}
-  .btn-primary:hover{background:#3841c4;}
+  .btn-primary{background:var(--primary); color:var(--surface);}
+  html[data-theme="dark"] .btn-primary{color:#12131A;}
+  .btn-primary:hover{filter:brightness(0.92);}
   .btn-outline{border-color:var(--outline); color:var(--on-surface);}
   .btn-outline:hover{background:var(--surface-container);}
 
@@ -108,6 +162,7 @@
     font-size:0.88rem;
     line-height:1.85;
     overflow-x:auto;
+    border:1px solid var(--outline);
   }
   .demo .tag{color:#8AB4FF; font-weight:600;}
   .demo .attr{color:#F2C879;}
@@ -140,7 +195,7 @@
     display:flex; align-items:center; justify-content:center;
     font-size:1.15rem; flex-shrink:0;
   }
-  .acc-title{flex:1; min-width:0;}
+  .acc-title{flex:1; min-width:0; color:var(--on-surface);}
   .acc-title strong{display:block; font-size:1rem; font-weight:600;}
   .acc-title span{display:block; font-size:0.88rem; color:var(--on-surface-variant); margin-top:2px;}
   .acc-chevron{
@@ -171,6 +226,7 @@
     padding:16px 18px;
     font-family:'Roboto Mono', monospace;
     font-size:0.95rem;
+    color:var(--on-surface);
   }
   .copy-btn{
     background:var(--surface); border:1px solid var(--outline);
@@ -181,6 +237,18 @@
   }
   .copy-btn:hover{background:var(--surface-container-hover);}
   .copy-btn.copied{background:var(--success-container); color:var(--on-success-container); border-color:transparent;}
+
+  /* ---------- Lector ---------- */
+  .drop-zone{
+    border:2px dashed var(--outline); border-radius:16px; padding:30px;
+    text-align:center; background:var(--surface-container);
+  }
+  .lector-output{
+    margin-top:20px; text-align:left; background:var(--code-surface); color:var(--code-on-surface);
+    border-radius:12px; padding:20px; font-family:'Roboto Mono', monospace; font-size:0.85rem;
+    white-space:pre-wrap; word-break:break-word; max-height:400px; overflow-y:auto; display:none;
+    border:1px solid var(--outline);
+  }
 
   /* ---------- Footer ---------- */
   footer{padding:40px 0 60px; border-top:1px solid var(--outline); margin-top:20px;}
@@ -198,19 +266,49 @@
 </head>
 <body>
 
-<header class="topbar">
+<header class="topbar" id="topbar">
   <div class="wrap">
-    <div class="brand"><span class="mark">H</span> HBF</div>
+    <a href="#" class="brand">
+      <span class="mark">
+        <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="markBg" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#4550E5"/>
+              <stop offset="100%" stop-color="#3841C4"/>
+            </linearGradient>
+          </defs>
+          <rect x="0" y="0" width="512" height="512" rx="112" fill="url(#markBg)"/>
+          <g fill="none" stroke="#FFFFFF" stroke-width="26" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M 156 140 L 108 140 L 108 372 L 156 372"/>
+            <path d="M 356 140 L 404 140 L 404 372 L 356 372"/>
+          </g>
+          <g fill="#FFFFFF">
+            <rect x="182" y="176" width="148" height="30" rx="15" opacity="0.95"/>
+            <rect x="182" y="226" width="110" height="30" rx="15" opacity="0.8"/>
+            <rect x="182" y="276" width="148" height="30" rx="15" opacity="0.65"/>
+            <rect x="182" y="326" width="86"  height="30" rx="15" opacity="0.5"/>
+          </g>
+        </svg>
+      </span>
+      HBF
+    </a>
     <div class="top-links">
       <a href="https://github.com/lucassogarayDA/hbf">GitHub</a>
       <a href="https://pypi.org/project/hbf-hyper/">PyPI</a>
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Cambiar a modo oscuro">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+      </button>
     </div>
   </div>
 </header>
 
 <div class="wrap">
   <section class="hero">
-    <span class="eyebrow-badge">Open source · MIT</span>
+    <div class="badge-row">
+      <span class="eyebrow-badge">Open source · MIT</span>
+      <span class="version-badge">v3.0.3</span>
+    </div>
     <h1>Un archivo. Todo tu contenido.</h1>
     <p class="lede">HBF guarda texto, binario, metadatos, listas y bloques especializados en un solo formato de texto plano, editable desde una terminal.</p>
     <div class="cta-row">
@@ -360,6 +458,19 @@ print(<span class="str">"hola desde un bloque de código"</span>)
 
       <div class="acc-item">
         <button class="acc-trigger" aria-expanded="false">
+          <span class="acc-icon">📦</span>
+          <span class="acc-title"><strong>Compresión</strong><span>Opcional, para binarios</span></span>
+          <span class="acc-chevron">⌄</span>
+        </button>
+        <div class="acc-panel">
+          <div class="acc-panel-inner">
+            Se activa o desactiva desde el propio menú del programa. Cuando está activa, los archivos binarios que guardes quedan comprimidos con gzip dentro del .hbf, ocupando menos espacio.
+          </div>
+        </div>
+      </div>
+
+      <div class="acc-item">
+        <button class="acc-trigger" aria-expanded="false">
           <span class="acc-icon">🖥️</span>
           <span class="acc-title"><strong>Multiplataforma</strong><span>Termux, Linux, Windows</span></span>
           <span class="acc-chevron">⌄</span>
@@ -391,10 +502,10 @@ print(<span class="str">"hola desde un bloque de código"</span>)
     <h2 class="section-title">📂 Probar HBF</h2>
     <p class="section-sub">Subí un archivo .hbf y mirá su contenido en vivo.</p>
   </div>
-  <div style="border:2px dashed var(--outline); border-radius:16px; padding:30px; text-align:center; background:var(--surface-container);">
+  <div class="drop-zone">
     <input type="file" id="fileInput" accept=".hbf" style="display:none;">
     <button class="btn btn-primary" id="uploadBtn">Seleccionar archivo .hbf</button>
-    <div id="output" style="margin-top:20px; text-align:left; background:var(--code-surface); color:var(--code-on-surface); border-radius:12px; padding:20px; font-family:monospace; white-space:pre-wrap; word-break:break-word; max-height:400px; overflow-y:auto; display:none;"></div>
+    <div id="output" class="lector-output"></div>
   </div>
 </section>
 
@@ -463,6 +574,44 @@ print(<span class="str">"hola desde un bloque de código"</span>)
     };
     reader.readAsText(file);
   });
+
+  // ---------- Modo oscuro ----------
+  (function(){
+    var root = document.documentElement;
+    var toggle = document.getElementById('themeToggle');
+    var stored = localStorage.getItem('hbf-theme');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    var theme = stored || (prefersDark ? 'dark' : 'light');
+    applyTheme(theme);
+
+    toggle.addEventListener('click', function(){
+      theme = (root.getAttribute('data-theme') === 'dark') ? 'light' : 'dark';
+      localStorage.setItem('hbf-theme', theme);
+      applyTheme(theme);
+    });
+
+    function applyTheme(t){
+      if(t === 'dark'){
+        root.setAttribute('data-theme', 'dark');
+        toggle.setAttribute('aria-label', 'Cambiar a modo claro');
+      } else {
+        root.removeAttribute('data-theme');
+        toggle.setAttribute('aria-label', 'Cambiar a modo oscuro');
+      }
+    }
+  })();
+
+  // ---------- Sombra sutil en la topbar al scrollear ----------
+  (function(){
+    var topbar = document.getElementById('topbar');
+    window.addEventListener('scroll', function(){
+      if(window.scrollY > 4){
+        topbar.classList.add('scrolled');
+      } else {
+        topbar.classList.remove('scrolled');
+      }
+    }, {passive:true});
+  })();
 </script>
 
 </body>
