@@ -18,15 +18,17 @@ classifiers = [
     "Topic :: System :: Filesystems",
 ]
 
+dependencies = [
+    "cryptography",
+    "pillow"
+]
+
+
 [project.urls]
 "Source Code" = "https://github.com/lucassogarayDA/hbf"
 "Documentation" = "https://github.com/lucassogarayDA/hbf#readme"
 "Issue Tracker" = "https://github.com/lucassogarayDA/hbf/issues"
 
-dependencies = [
-    "cryptography",
-    "pillow"
-]
 
 [project.scripts]
 hbf = "hbf:main"
