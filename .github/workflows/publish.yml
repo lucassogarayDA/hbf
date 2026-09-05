@@ -1,4 +1,4 @@
-name: Publish to PyPI
+5name: Publish to PyPI
 
 on:
   push:
@@ -9,7 +9,7 @@ jobs:
   build:
     runs-on: ubuntu-22.04
     env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-22.04
     needs: build
     env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     permissions:
       id-token: write
     environment:
