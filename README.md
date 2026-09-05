@@ -1,4 +1,4 @@
-# 📁 HBF - Hybrid Binary Format
+📁 HBF - Hybrid Binary Format
 
 **HBF** es un formato de archivo todo en uno que combina texto, binario, metadatos, listas y datos numéricos en un solo archivo. Creado desde Termux, diseñado para ser simple, útil y portable.
 
@@ -24,6 +24,8 @@
 | 💾 **Configurable** | Guarda colores, ruta base e idioma en un archivo de configuración |
 | 🖥️ **Multiplataforma** | Funciona en Termux (Android), Linux y Windows |
 | 🗄️ **Bloque SQL** | Edita y exporta a SQLite |
+| 🎨 **10 colores** | Personalizá el TUI con 10 colores diferentes |
+| 🔌 **API** | Usá HBF como biblioteca desde Python |
 
 ---
 
@@ -31,20 +33,25 @@
 
 ### Opción 1: Desde PyPI (recomendado)
 
+```bash
 pip install hbf-hyper
 hbf
+```
 
 Opción 2: Desde el código fuente
 
+```bash
 git clone https://github.com/lucassogarayDA/hbf.git
 cd hbf
 python hbf.py
-
+```
 
 Opción 3: Desde el paquete .deb (Termux/Linux)
 
-dpkg -i hbf_3.0.1_all.deb
+```bash
+dpkg -i hbf_3.0.3_all.deb
 hbf
+```
 
 ---
 
@@ -52,7 +59,9 @@ hbf
 
 Ejecutá el comando y seguí el menú interactivo:
 
+```bash
 hbf
+```
 
 Al abrir, podés elegir idioma o usar la detección automática entre 12 idiomas disponibles.
 
@@ -106,9 +115,9 @@ Al abrir, podés elegir idioma o usar la detección automática entre 12 idiomas
 
 ```
 [HBF]
-Version: 3.0.1
+Version: 3.0.3
 Magic: HBF
-Fecha: 2026-09-03T00:00:00
+Fecha: 2026-09-05T00:00:00
 
 [METADATOS]
 {
@@ -129,11 +138,58 @@ Este es el contenido principal del archivo.
 
 ---
 
+🔌 API de HBF (para desarrolladores)
+
+HBF puede usarse como biblioteca de Python además de como herramienta de terminal.
+
+📦 Funciones principales
+
+Función Descripción
+hbf.crear("archivo.hbf", titulo="...", autor="...") Crea un archivo HBF nuevo y devuelve un objeto Doc
+hbf.Doc("archivo.hbf") Abre un archivo HBF existente para leerlo y modificarlo
+
+📝 Propiedades del objeto Doc
+
+Propiedad Tipo Descripción
+doc.texto str Contenido del bloque [TEXTO]
+doc.metadatos dict Contenido de [METADATOS] como JSON
+doc.listas str Contenido de [LISTAS]
+doc.notas str Contenido de [NOTAS]
+doc.titulos str Contenido de [TITULOS]
+doc.numerico dict Contenido de [NUMERICO] como JSON
+
+🧩 Métodos del objeto Doc
+
+Método Descripción
+doc.agregar_bloque("CODE", "print(1)", language="python") Agrega un bloque nuevo con atributos
+doc.editar_bloque("CODE", indice=0, contenido="nuevo", language="python") Edita un bloque existente por índice
+doc.eliminar_bloque("CODE", indice=0) Elimina un bloque por índice
+doc.bloques("CODE", language="python") Devuelve los bloques que coinciden con los filtros
+doc.agregar_imagen("foto.jpg", nombre="...", descripcion="...") Agrega una imagen codificada en base64
+doc.exportar("json", "salida.json") Exporta a TXT, JSON, MD, XML, CSV, YAML, HTML, INI o TOML
+doc.guardar() Guarda todos los cambios en el archivo
+
+📦 Ejemplo
+
+```python
+import hbf
+
+doc = hbf.crear("proyecto.hbf", titulo="Mi proyecto", autor="Lucas")
+doc.texto = "Contenido principal"
+doc.agregar_bloque("CODE", "print('Hola')", language="python")
+doc.agregar_imagen("diagrama.png", nombre="diagrama")
+doc.guardar()
+doc.exportar("json")
+```
+
+---
+
 🔒 Proteger con contraseña
 
+```bash
 hbf
 Opción 31 → Elegir archivo → Opción 1 (Cifrar) → Ingresar contraseña
-
+```
 
 El archivo cifrado se guarda con extensión .hbf.enc
 
@@ -158,6 +214,8 @@ El archivo cifrado se guarda con extensión .hbf.enc
 ☑ Historial de cambios
 ☑ Generación desde HBF
 ☑ Compresión activable desde TUI
+☑ 10 colores para el TUI
+☑ API para desarrolladores
 
 ---
 
@@ -171,12 +229,11 @@ MIT — Podés usarlo, modificarlo y distribuirlo libremente.
 
 Lucas Sogaray
 
-· GitHub: @LucassogarayDA
-· Email: lucassogaray72@gmail.com
+- Reddit: [u/PapuSOGA](https://reddit.com/user/PapuSOGA)
+- TikTok: [@Lucassogaray1](https://vm.tiktok.com/ZS9SR8LNEbUUd-Jlquz/)
 
 ---
 
 ⭐ ¿Te gusta HBF?
 
 Si te gusta el proyecto, dejale una estrella en GitHub ⭐ y compartilo con otros.
-
