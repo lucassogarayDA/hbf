@@ -3,9 +3,9 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "vlsy"
+name = "HBF"
 version = "3.0.3"
-description = "Vlsy - Un formato de archivo todo en uno"
+description = "HBF - Un formato de archivo todo en uno"
 readme = "README.md"
 authors = [{name = "Lucas Sogaray"}]
 license = {text = "MIT"}
@@ -31,7 +31,7 @@ dependencies = [
 
 
 [project.scripts]
-vlsy = "vlsy:main"
+HBF = "HBF:main"
 
 [tool.setuptools]
-py-modules = ["vlsy"]
+py-modules = ["HBF"]
