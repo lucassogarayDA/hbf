@@ -3,11 +3,11 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "hbf-hyper"
-version = "3.0.2"
-description = "Hybrid Binary Format - Un formato de archivo todo en uno"
+name = "vlsy"
+version = "3.0.3"
+description = "Vlsy - Un formato de archivo todo en uno"
 readme = "README.md"
-authors = [{name = "Lucas Sogaray", email = "lucassogaray72@gmail.com"}]
+authors = [{name = "Lucas Sogaray"}]
 license = {text = "MIT"}
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -31,7 +31,7 @@ dependencies = [
 
 
 [project.scripts]
-hbf = "hbf:main"
+vlsy = "vlsy:main"
 
 [tool.setuptools]
-py-modules = ["hbf"]
+py-modules = ["vlsy"]

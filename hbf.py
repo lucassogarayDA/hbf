@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# hbf.py - Hybrid Binary Format v3.0.2
+# hbf.py - Hybrid Binary Format v3.0.3
 import json
 import re
 import base64
@@ -14,7 +14,7 @@ import gzip
 import io
 import shutil
 
-VERSION = "3.0.2"
+VERSION = "3.0.3"
 
 # ====================
 # DETECCIÓN DE SISTEMA OPERATIVO
@@ -55,11 +55,16 @@ config = cargar_config()
 # ====================
 
 COLORES = {
-    "azul": {"titulo": "\033[1;36m", "menu": "\033[1;32m", "error": "\033[1;31m", "exito": "\033[1;32m", "info": "\033[1;34m", "advertencia": "\033[1;33m"},
-    "verde": {"titulo": "\033[1;32m", "menu": "\033[1;36m", "error": "\033[1;31m", "exito": "\033[1;33m", "info": "\033[1;34m", "advertencia": "\033[1;35m"},
-    "rojo": {"titulo": "\033[1;31m", "menu": "\033[1;33m", "error": "\033[1;31m", "exito": "\033[1;32m", "info": "\033[1;34m", "advertencia": "\033[1;35m"},
-    "amarillo": {"titulo": "\033[1;33m", "menu": "\033[1;32m", "error": "\033[1;31m", "exito": "\033[1;36m", "info": "\033[1;34m", "advertencia": "\033[1;31m"},
-    "morado": {"titulo": "\033[1;35m", "menu": "\033[1;36m", "error": "\033[1;31m", "exito": "\033[1;32m", "info": "\033[1;34m", "advertencia": "\033[1;33m"},
+    "azul": {"titulo": "\033[38;5;75m", "menu": "\033[38;5;80m", "error": "\033[38;5;203m", "exito": "\033[38;5;114m", "info": "\033[38;5;110m", "advertencia": "\033[38;5;179m"},
+    "verde": {"titulo": "\033[38;5;114m", "menu": "\033[38;5;80m", "error": "\033[38;5;203m", "exito": "\033[38;5;114m", "info": "\033[38;5;110m", "advertencia": "\033[38;5;179m"},
+    "rojo": {"titulo": "\033[38;5;203m", "menu": "\033[38;5;217m", "error": "\033[38;5;203m", "exito": "\033[38;5;114m", "info": "\033[38;5;110m", "advertencia": "\033[38;5;179m"},
+    "amarillo": {"titulo": "\033[38;5;179m", "menu": "\033[38;5;222m", "error": "\033[38;5;203m", "exito": "\033[38;5;114m", "info": "\033[38;5;110m", "advertencia": "\033[38;5;179m"},
+    "morado": {"titulo": "\033[38;5;140m", "menu": "\033[38;5;110m", "error": "\033[38;5;203m", "exito": "\033[38;5;114m", "info": "\033[38;5;110m", "advertencia": "\033[38;5;179m"},
+    "cian": {"titulo": "\033[38;5;80m", "menu": "\033[38;5;117m", "error": "\033[38;5;203m", "exito": "\033[38;5;114m", "info": "\033[38;5;110m", "advertencia": "\033[38;5;179m"},
+    "naranja": {"titulo": "\033[38;5;209m", "menu": "\033[38;5;215m", "error": "\033[38;5;203m", "exito": "\033[38;5;114m", "info": "\033[38;5;110m", "advertencia": "\033[38;5;179m"},
+    "rosa": {"titulo": "\033[38;5;218m", "menu": "\033[38;5;211m", "error": "\033[38;5;203m", "exito": "\033[38;5;114m", "info": "\033[38;5;110m", "advertencia": "\033[38;5;179m"},
+    "gris": {"titulo": "\033[38;5;250m", "menu": "\033[38;5;245m", "error": "\033[38;5;203m", "exito": "\033[38;5;114m", "info": "\033[38;5;110m", "advertencia": "\033[38;5;179m"},
+    "esmeralda": {"titulo": "\033[38;5;36m", "menu": "\033[38;5;79m", "error": "\033[38;5;203m", "exito": "\033[38;5;114m", "info": "\033[38;5;110m", "advertencia": "\033[38;5;179m"},
 }
 
 if SO == "Windows":
@@ -91,6 +96,7 @@ class HBFTranslator:
             except:
                 pass
         if not self.idiomas:
+            print("⚠️  No se pudo leer ningún idioma desde /locales — usando un mínimo de emergencia (es/en).")
             self.idiomas = self.obtener_todos_los_idiomas()
             self.crear_idiomas_por_defecto(locales_dir)
 
@@ -103,19 +109,12 @@ class HBFTranslator:
         print(f"✅ {len(idiomas)} idiomas instalados en {directorio}")
 
     def obtener_todos_los_idiomas(self):
+        # Los idiomas viven en /locales como JSON — este es solo un mínimo
+        # de emergencia si esa carpeta falta o está vacía/corrupta, para
+        # no crashear con un traceback feo en instalaciones rotas.
         return {
-            "es": self.idioma_es(),
-            "en": self.idioma_en(),
-            "pt": self.idioma_pt(),
-            "fr": self.idioma_fr(),
-            "de": self.idioma_de(),
-            "it": self.idioma_it(),
-            "ja": self.idioma_ja(),
-            "zh": self.idioma_zh(),
-            "ru": self.idioma_ru(),
-            "ko": self.idioma_ko(),
-            "ar": self.idioma_ar(),
-            "hi": self.idioma_hi()
+            "es": {"nombre_idioma": "Español", "titulo": "HBF"},
+            "en": {"nombre_idioma": "English", "titulo": "HBF"},
         }
 
 
@@ -134,14 +133,14 @@ class HBFTranslator:
             return "es"
 
     def elegir_idioma(self):
-        print("\n" + "=" * 48)
+        print("\n" + "─" * 40)
         print(f"  {self.get('idioma_opciones')}")
-        print("=" * 48)
+        print("─" * 40)
         disponibles = sorted(self.idiomas.keys())
         for i, codigo in enumerate(disponibles, 1):
             nombre = self.idiomas[codigo].get('nombre_idioma', codigo.upper())
             print(f"  {i}. {nombre}")
-        print("=" * 48)
+        print("─" * 40)
         opcion = input("  👉 Opción: ")
         try:
             idx = int(opcion) - 1
@@ -225,7 +224,7 @@ def listar_hbf():
     if not archivos:
         info(f"No hay archivos .hbf en {ruta}")
         return []
-    print(f"\n   📂  Archivos .hbf en {ruta} ({len(archivos)}):")
+    print(f"\n   📂  Archivos en {ruta} ({len(archivos)}):")
     for i, arch in enumerate(archivos, 1):
         print(f"      {i}. {arch}")
     return archivos
@@ -281,7 +280,7 @@ def editar_bloque_especializado(archivo, bloque, atributos_extra=None):
         print(f"\n   📝  EDITANDO BLOQUE [{bloque}]")
     else:
         print(f"\n   📝  CREANDO BLOQUE [{bloque}] (no existía en este archivo)")
-    print("   " + "=" * 48)
+    print("   " + "─" * 40)
     
     if attrs:
         print(f"   📋  Atributos actuales:")
@@ -764,7 +763,7 @@ def listar_imagenes():
         return
     
     print(f"\n   🖼️  IMÁGENES EN {os.path.basename(archivo)}:")
-    print("   " + "=" * 60)
+    print("   " + "─" * 40)
     
     total_tamaño = 0
     for i, bloque in enumerate(bloques, 1):
@@ -799,7 +798,7 @@ def listar_imagenes():
         print(f"      🔑 {hash_str[:8]}...")
         print()
     
-    print("   " + "=" * 60)
+    print("   " + "─" * 40)
     print(f"   📊 Total: {len(bloques)} imágenes | 📦 Tamaño total: ~{total_tamaño}KB")
 
 def info_imagen():
@@ -828,7 +827,7 @@ def info_imagen():
         if nombre and nombre_buscar.lower() in nombre.group(1).lower():
             # Mostrar información detallada
             print("\n   📊  INFORMACIÓN DETALLADA")
-            print("   " + "=" * 48)
+            print("   " + "─" * 40)
             
             campos = {
                 "Nombre": "nombre",
@@ -847,7 +846,7 @@ def info_imagen():
                 if match:
                     print(f"   {label}: {match.group(1).strip()}")
             
-            print("   " + "=" * 48)
+            print("   " + "─" * 40)
             return
     
     error(T.get('imagen_no_encontrada'))
@@ -964,7 +963,7 @@ def buscar_avanzado():
         return
     
     print(f"\n   ✅  Encontrado '{busqueda}' en {len(resultados)} bloque(s):")
-    print("   " + "=" * 48)
+    print("   " + "─" * 40)
     
     for i, (nombre, contenido_bloque) in enumerate(resultados, 1):
         print(f"\n   📦  {i}. [{nombre}]")
@@ -1027,7 +1026,7 @@ def estadisticas_avanzadas():
     total_imagenes_size = tam_bloques.get('IMAGEN', 0)
     
     print(f"\n   📊  ESTADÍSTICAS DE {os.path.basename(archivo)}")
-    print("   " + "=" * 60)
+    print("   " + "─" * 40)
     print(f"   📄  Archivo: {os.path.basename(archivo)}")
     print(f"   📏  Tamaño: {tamaño} bytes ({tamaño//1024} KB)")
     print(f"   📝  Líneas: {lineas}")
@@ -1086,9 +1085,9 @@ def ver_historial():
         return
     
     print("\n   📜  HISTORIAL DE CAMBIOS")
-    print("   " + "=" * 48)
+    print("   " + "─" * 40)
     print(match.group(1).strip())
-    print("   " + "=" * 48)
+    print("   " + "─" * 40)
 
 def agregar_historial(archivo, mensaje):
     """Agrega una entrada al historial del archivo"""
@@ -1123,6 +1122,271 @@ def agregar_historial(archivo, mensaje):
     
     with open(archivo, 'w', encoding='utf-8') as f:
         f.write(nuevo_contenido)
+
+# ====================
+# API DE BIBLIOTECA (import hbf)
+# ====================
+# Todo lo de acá abajo está pensado para usarse desde código, sin pasar
+# por el menú interactivo. Ejemplo:
+#
+#     import hbf
+#     doc = hbf.Doc("nota.hbf")
+#     doc.texto = "contenido nuevo"
+#     doc.agregar_bloque("CODE", "print(1)", language="python")
+#     doc.guardar()
+#     doc.exportar("json")
+#
+#     nuevo = hbf.crear("otra.hbf", titulo="Mi nota", autor="Lucas")
+
+class BloqueNoEncontrado(Exception):
+    """Se pidió un bloque que el archivo no tiene."""
+    pass
+
+
+def _reemplazar_o_crear_bloque(contenido, nombre, texto_nuevo):
+    """Reemplaza el ÚNICO bloque [NOMBRE] existente, o lo crea antes de
+    [FIN] si no existe todavía. Pensado solo para bloques de instancia
+    única (TEXTO, METADATOS, etc.) — no distingue entre varias instancias
+    del mismo nombre con distintos atributos."""
+    patron = r'(\[' + nombre + r'(?::[^\]]*)?\]\n).*?(?=\n\n|\n\[|\Z)'
+    match = re.search(patron, contenido, re.DOTALL)
+    nuevo_bloque = f"[{nombre}]\n{texto_nuevo}\n"
+    if match:
+        return contenido[:match.start()] + nuevo_bloque + contenido[match.end():]
+    elif '[FIN]' in contenido:
+        return contenido.replace('[FIN]', nuevo_bloque + '\n[FIN]', 1)
+    else:
+        return contenido.rstrip('\n') + '\n\n' + nuevo_bloque
+
+
+def _bloque_por_indice(contenido, nombre, indice):
+    """Devuelve el objeto match (con posición) de la instancia #indice
+    (0-based) de [NOMBRE] en el orden en que aparece en el archivo."""
+    patron = r'\[' + nombre + r'(?::[^\]]*)?\]\n.*?(?=\n\n|\n\[|\Z)'
+    matches = list(re.finditer(patron, contenido, re.DOTALL))
+    if indice >= len(matches):
+        raise BloqueNoEncontrado(
+            f"No hay una instancia [{nombre}] #{indice} (el archivo tiene {len(matches)})"
+        )
+    return matches[indice]
+
+
+def _reemplazar_bloque_por_indice(contenido, nombre, indice, texto_nuevo, atributos=None):
+    m = _bloque_por_indice(contenido, nombre, indice)
+    if atributos:
+        attrs_str = ','.join(f"{k}={v}" for k, v in atributos.items())
+        header = f"{nombre}:{attrs_str}"
+    else:
+        header_match = re.match(r'\[' + nombre + r'(:[^\]]*)?\]', m.group(0))
+        header = nombre + (header_match.group(1) or '')
+    nuevo_bloque = f"[{header}]\n{texto_nuevo}\n"
+    return contenido[:m.start()] + nuevo_bloque + contenido[m.end():]
+
+
+def _eliminar_bloque_por_indice(contenido, nombre, indice):
+    m = _bloque_por_indice(contenido, nombre, indice)
+    return contenido[:m.start()].rstrip('\n') + '\n\n' + contenido[m.end():].lstrip('\n')
+
+
+class Doc:
+    """Representa un archivo .hbf abierto en memoria."""
+
+    _SIMPLES = {"texto": "TEXTO", "listas": "LISTAS", "notas": "NOTAS", "titulos": "TITULOS"}
+    _SIMPLES_JSON = {"metadatos": "METADATOS", "numerico": "NUMERICO"}
+
+    def __init__(self, ruta):
+        self.ruta = obtener_ruta(ruta)
+        if not os.path.exists(self.ruta):
+            raise FileNotFoundError(f"No existe el archivo: {self.ruta}")
+        with open(self.ruta, 'r', encoding='utf-8') as f:
+            contenido = f.read()
+        self._bloques = obtener_bloques(contenido)
+        self._cambios_simples = {}
+        self._bloques_nuevos = []
+        self._ediciones_indexadas = []   # (nombre, indice, contenido, atributos)
+        self._eliminaciones_indexadas = []   # (nombre, indice)
+
+    def __getattr__(self, nombre):
+        simples = Doc._SIMPLES
+        simples_json = Doc._SIMPLES_JSON
+        if nombre in simples:
+            clave = simples[nombre]
+            if nombre in self.__dict__.get('_cambios_simples', {}):
+                return self._cambios_simples[nombre]
+            lista = self._bloques.get(clave)
+            if not lista:
+                raise BloqueNoEncontrado(f"El archivo no tiene un bloque [{clave}]")
+            return lista[0]['contenido']
+        if nombre in simples_json:
+            clave = simples_json[nombre]
+            if nombre in self.__dict__.get('_cambios_simples', {}):
+                return self._cambios_simples[nombre]
+            lista = self._bloques.get(clave)
+            if not lista:
+                raise BloqueNoEncontrado(f"El archivo no tiene un bloque [{clave}]")
+            try:
+                return json.loads(lista[0]['contenido'])
+            except (json.JSONDecodeError, TypeError):
+                return lista[0]['contenido']
+        raise AttributeError(f"'Doc' no tiene atributo '{nombre}'")
+
+    def __setattr__(self, nombre, valor):
+        if nombre in ('ruta', '_bloques', '_cambios_simples', '_bloques_nuevos',
+                      '_ediciones_indexadas', '_eliminaciones_indexadas'):
+            super().__setattr__(nombre, valor)
+            return
+        if nombre in Doc._SIMPLES:
+            self._cambios_simples[nombre] = str(valor)
+            return
+        if nombre in Doc._SIMPLES_JSON:
+            texto = valor if isinstance(valor, str) else json.dumps(valor, indent=2, ensure_ascii=False)
+            self._cambios_simples[nombre] = texto
+            return
+        super().__setattr__(nombre, valor)
+
+    def bloques(self, nombre, **filtros):
+        """Devuelve el contenido de todos los bloques con ese nombre,
+        opcionalmente filtrados por atributos (ej. language='python')."""
+        lista = self._bloques.get(nombre.upper(), [])
+        if not filtros:
+            return [b['contenido'] for b in lista]
+        return [b['contenido'] for b in lista
+                if all(b['atributos'].get(k) == str(v) for k, v in filtros.items())]
+
+    def agregar_bloque(self, nombre, contenido, **atributos):
+        """Agrega un bloque nuevo (siempre como instancia adicional,
+        nunca reemplaza una existente). Se escribe recién al guardar()."""
+        self._bloques_nuevos.append((nombre.upper(), str(contenido), atributos))
+
+    def editar_bloque(self, nombre, indice=0, contenido=None, **atributos):
+        """Edita una instancia específica (por índice, 0 = primera en el
+        archivo) de un bloque que puede repetirse — CODE, API, SQL, etc.
+        El índice se cuenta sobre las instancias que YA existen en disco;
+        no cuenta los bloques agregados en esta misma sesión antes de
+        guardar(). Si no pasás atributos nuevos, se conservan los que
+        ya tenía esa instancia."""
+        self._ediciones_indexadas.append((nombre.upper(), indice, contenido, atributos))
+
+    def eliminar_bloque(self, nombre, indice=0):
+        """Elimina una instancia específica (por índice) de un bloque
+        repetible. Igual que editar_bloque, el índice es sobre lo que
+        ya existe en disco."""
+        self._eliminaciones_indexadas.append((nombre.upper(), indice))
+
+    def agregar_imagen(self, ruta_imagen, nombre=None, descripcion="Sin descripción", tags="imagen"):
+        """Agrega una imagen codificada en base64, con el mismo formato
+        de campos que usa el menú interactivo (compatible con
+        listar_imagenes/extraer_imagen/info_imagen)."""
+        ruta_imagen = os.path.expanduser(ruta_imagen)
+        if not os.path.exists(ruta_imagen):
+            raise FileNotFoundError(f"La imagen no existe: {ruta_imagen}")
+
+        with open(ruta_imagen, 'rb') as f:
+            datos = f.read()
+
+        datos_b64 = base64.b64encode(datos).decode('ascii')
+        tamaño = os.path.getsize(ruta_imagen)
+        extension = os.path.splitext(ruta_imagen)[1][1:].lower()
+
+        ancho, alto = "desconocido", "desconocido"
+        try:
+            from PIL import Image
+            import io
+            img = Image.open(io.BytesIO(datos))
+            ancho, alto = img.size
+        except Exception:
+            pass
+
+        hash_md5 = hashlib.md5(datos).hexdigest()
+        if not nombre:
+            nombre = os.path.splitext(os.path.basename(ruta_imagen))[0]
+
+        contenido_bloque = (
+            f"nombre: {nombre}.{extension}\n"
+            f"formato: {extension}\n"
+            f"ancho: {ancho}\n"
+            f"alto: {alto}\n"
+            f"tamaño: {tamaño // 1024}KB\n"
+            f"fecha: {datetime.now().isoformat()}\n"
+            f"descripcion: {descripcion}\n"
+            f"tags: {tags}\n"
+            f"hash: {hash_md5}\n"
+            f"data: {datos_b64}"
+        )
+        self._bloques_nuevos.append(("IMAGEN", contenido_bloque, {}))
+
+    def guardar(self):
+        """Escribe a disco los cambios hechos en memoria."""
+        with open(self.ruta, 'r', encoding='utf-8') as f:
+            contenido = f.read()
+
+        for nombre_attr, clave in {**Doc._SIMPLES, **Doc._SIMPLES_JSON}.items():
+            if nombre_attr in self._cambios_simples:
+                contenido = _reemplazar_o_crear_bloque(contenido, clave, self._cambios_simples[nombre_attr])
+
+        # Eliminaciones antes que ediciones, y de mayor a menor índice,
+        # para que borrar una instancia no corra el índice de las demás
+        # eliminaciones/ediciones pendientes sobre el mismo nombre.
+        for nombre, indice in sorted(self._eliminaciones_indexadas, key=lambda x: -x[1]):
+            contenido = _eliminar_bloque_por_indice(contenido, nombre, indice)
+
+        for nombre, indice, texto, atributos in self._ediciones_indexadas:
+            contenido = _reemplazar_bloque_por_indice(contenido, nombre, indice, texto, atributos or None)
+
+        for nombre, texto, atributos in self._bloques_nuevos:
+            if atributos:
+                attrs_str = ','.join(f"{k}={v}" for k, v in atributos.items())
+                header = f"{nombre}:{attrs_str}"
+            else:
+                header = nombre
+            bloque_nuevo = f"[{header}]\n{texto}\n"
+            if '[FIN]' in contenido:
+                contenido = contenido.replace('[FIN]', bloque_nuevo + '\n[FIN]', 1)
+            else:
+                contenido = contenido.rstrip('\n') + '\n\n' + bloque_nuevo
+
+        with open(self.ruta, 'w', encoding='utf-8') as f:
+            f.write(contenido)
+
+        # Recargar en memoria desde el archivo recién escrito, y limpiar pendientes
+        self._bloques = obtener_bloques(contenido)
+        self._cambios_simples = {}
+        self._bloques_nuevos = []
+        self._ediciones_indexadas = []
+        self._eliminaciones_indexadas = []
+
+    def exportar(self, formato, ruta_salida=None):
+        """Exporta el archivo (tal cual está en disco — llamá guardar()
+        antes si tenés cambios sin guardar) al formato pedido.
+        Devuelve la ruta del archivo generado."""
+        with open(self.ruta, 'r', encoding='utf-8') as f:
+            contenido = f.read()
+        nombre_base = os.path.splitext(os.path.basename(self.ruta))[0]
+        extension, texto_generado = generar_exportacion(contenido, nombre_base, formato)
+        if ruta_salida is None:
+            ruta_salida = os.path.join(os.path.dirname(self.ruta), nombre_base + "." + extension)
+        with open(ruta_salida, 'w', encoding='utf-8') as f:
+            f.write(texto_generado)
+        return ruta_salida
+
+
+def crear(ruta, titulo="Sin título", autor=""):
+    """Crea un archivo .hbf nuevo desde código y devuelve un Doc ya
+    abierto sobre él, sin pasar por el menú interactivo."""
+    ruta = obtener_ruta(ruta)
+    if not ruta.endswith(".hbf"):
+        ruta += ".hbf"
+    with open(ruta, 'w', encoding='utf-8') as f:
+        f.write("[HBF]\n")
+        f.write(f"Version: {VERSION}\n")
+        f.write("Magic: HBF\n")
+        f.write(f"Fecha: {datetime.now().isoformat()}\n\n")
+        f.write("[METADATOS]\n")
+        metadatos = {"titulo": titulo, "autor": autor, "creado": datetime.now().isoformat()}
+        f.write(json.dumps(metadatos, indent=2))
+        f.write("\n\n")
+        f.write("[FIN]\n")
+    return Doc(ruta)
 
 # ====================
 # FUNCIONES EXISTENTES MEJORADAS
@@ -1201,9 +1465,9 @@ def leer_hbf():
             fernet = Fernet(key)
             contenido = fernet.decrypt(datos_cifrados).decode('utf-8')
             print("\n   📖  CONTENIDO DESCIFRADO:")
-            print("   " + "=" * 48)
+            print("   " + "─" * 40)
             print(contenido)
-            print("   " + "=" * 48)
+            print("   " + "─" * 40)
         except ImportError:
             error("Se requiere cryptography. Instalá: pip install cryptography")
         except Exception as e:
@@ -1215,7 +1479,7 @@ def leer_hbf():
     
     # Mostrar con resaltado de bloques
     print("\n   📖  CONTENIDO:")
-    print("   " + "=" * 48)
+    print("   " + "─" * 40)
     
     # Dividir por bloques y mostrar con colores
     bloques = re.findall(r'(\[[A-Z]+(?::[^\]]*)?\]\n.*?)(?=\n\[[A-Z]+(?::[^\]]+)?\]|\n\[FIN\]|$)', contenido, re.DOTALL)
@@ -1230,7 +1494,7 @@ def leer_hbf():
         else:
             print(bloque)
     
-    print("   " + "=" * 48)
+    print("   " + "─" * 40)
 
 def editar_bloque_general(archivo, bloque):
     """Edita cualquier bloque del archivo"""
@@ -1434,6 +1698,161 @@ def extraer_binario():
     except Exception as e:
         error(f"Error: {e}")
 
+FORMATOS_EXPORTACION = {
+    "1": "txt", "2": "json", "3": "md", "4": "xml", "5": "csv",
+    "6": "yaml", "7": "html", "8": "ini", "9": "toml",
+}
+
+def generar_exportacion(contenido, nombre_base, formato):
+    """Función pura: recibe el contenido crudo de un .hbf y devuelve
+    (extension, texto_generado) para el formato pedido. No toca disco,
+    no imprime nada — la usan tanto el menú interactivo como la API.
+    'formato' puede ser el número de opción ("1".."9") o el nombre
+    ("txt", "json", etc.)."""
+    if formato in FORMATOS_EXPORTACION:
+        formato = FORMATOS_EXPORTACION[formato]
+    formato = formato.lower()
+
+    bloques = re.findall(r'\[([A-Z]+)(?::[^\]]*)?\]\n(.*?)(?=\n\[[A-Z]+(?::[^\]]+)?\]|\n\[FIN\]|$)', contenido, re.DOTALL)
+
+    if formato == "txt":
+        texto = re.search(r'\[TEXTO\]\n(.*?)(?=\n\[|\Z)', contenido, re.DOTALL)
+        if not texto:
+            raise ValueError("No se encontró texto")
+        return "txt", texto.group(1).strip()
+
+    elif formato == "json":
+        datos = {}
+        for nombre, valor in bloques:
+            try:
+                datos[nombre] = json.loads(valor.strip())
+            except:
+                datos[nombre] = valor.strip()
+        return "json", json.dumps(datos, indent=2)
+
+    elif formato == "md":
+        md = f"# {nombre_base}\n\n"
+        meta = re.search(r'\[METADATOS\]\n(.*?)(?=\n\[|\Z)', contenido, re.DOTALL)
+        if meta:
+            try:
+                metadatos = json.loads(meta.group(1).strip())
+                if metadatos.get('titulo'):
+                    md = f"# {metadatos['titulo']}\n\n"
+            except:
+                pass
+        texto = re.search(r'\[TEXTO\]\n(.*?)(?=\n\[|\Z)', contenido, re.DOTALL)
+        if texto:
+            md += texto.group(1).strip() + "\n\n"
+        return "md", md
+
+    elif formato == "xml":
+        xml = '<?xml version="1.0" encoding="UTF-8"?>\n<hbf>\n'
+        for nombre, valor in bloques:
+            xml += f'  <{nombre.lower()}>\n'
+            valor_escapado = valor.strip().replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+            xml += f'    <![CDATA[{valor_escapado}]]>\n'
+            xml += f'  </{nombre.lower()}>\n'
+        xml += "</hbf>"
+        return "xml", xml
+
+    elif formato == "csv":
+        csv = "BLOQUE,CONTENIDO\n"
+        for nombre, valor in bloques:
+            valor_escapado = valor.strip().replace('"', '""')
+            csv += f'{nombre},"{valor_escapado}"\n'
+        return "csv", csv
+
+    elif formato == "yaml":
+        yaml = ""
+        for nombre, valor in bloques:
+            yaml += f"{nombre.lower()}:\n"
+            for linea in valor.strip().split('\n'):
+                yaml += f"  {linea}\n"
+        return "yaml", yaml
+
+    elif formato == "html":
+        html = f"""<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{nombre_base}</title>
+    <style>
+        body {{ font-family: Arial, sans-serif; margin: 40px; background: #f5f5f5; }}
+        .container {{ max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }}
+        .bloque {{ margin: 20px 0; padding: 15px; border-left: 4px solid #4CAF50; background: #f9f9f9; }}
+        .bloque-titulo {{ font-weight: bold; color: #333; margin-bottom: 10px; }}
+        .bloque-contenido {{ white-space: pre-wrap; font-family: monospace; }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>{nombre_base}</h1>
+"""
+        for nombre, valor in bloques:
+            if nombre == "IMAGEN":
+                match = re.search(r'data:\s*([A-Za-z0-9+/=]+)', valor)
+                if match:
+                    html += f'        <div class="bloque">\n'
+                    html += f'            <div class="bloque-titulo">🖼️ {nombre}</div>\n'
+                    html += f'            <img src="data:image/png;base64,{match.group(1)}" style="max-width:100%"/>\n'
+                    html += f'        </div>\n'
+            else:
+                html += f'        <div class="bloque">\n'
+                html += f'            <div class="bloque-titulo">📦 {nombre}</div>\n'
+                html += f'            <div class="bloque-contenido">{valor.strip()}</div>\n'
+                html += f'        </div>\n'
+        html += f"""    </div>
+</body>
+</html>"""
+        return "html", html
+
+    elif formato == "ini":
+        ini = ""
+        for nombre, valor in bloques:
+            ini += f"[{nombre}]\n"
+            try:
+                datos = json.loads(valor.strip())
+                if isinstance(datos, dict):
+                    for key, val in datos.items():
+                        ini += f"{key} = {val}\n"
+                else:
+                    for linea in valor.strip().split('\n'):
+                        if ':' in linea or '=' in linea:
+                            ini += linea + '\n'
+            except:
+                for linea in valor.strip().split('\n'):
+                    if ':' in linea or '=' in linea:
+                        ini += linea + '\n'
+            ini += "\n"
+        return "ini", ini
+
+    elif formato == "toml":
+        toml = ""
+        for nombre, valor in bloques:
+            toml += f"[{nombre.lower()}]\n"
+            try:
+                datos = json.loads(valor.strip())
+                for key, val in datos.items():
+                    if isinstance(val, str):
+                        toml += f'{key} = "{val}"\n'
+                    elif isinstance(val, (int, float, bool)):
+                        toml += f'{key} = {val}\n'
+                    elif isinstance(val, list):
+                        toml += f'{key} = [{", ".join(str(x) for x in val)}]\n'
+            except:
+                for linea in valor.strip().split('\n'):
+                    if ':' in linea:
+                        partes = linea.split(':', 1)
+                        toml += f'{partes[0].strip()} = "{partes[1].strip()}"\n'
+                    elif '=' in linea:
+                        toml += linea + '\n'
+            toml += "\n"
+        return "toml", toml
+
+    else:
+        raise ValueError(f"Formato de exportación no reconocido: {formato}")
+
+
 def exportar_hbf():
     print("\n   📤  EXPORTAR\n")
     archivo = input_con_salida("   📄  Archivo HBF: ")
@@ -1465,173 +1884,16 @@ def exportar_hbf():
     ruta_salida = obtener_ruta_busqueda()
     nombre_base = os.path.splitext(os.path.basename(archivo))[0]
     
-    bloques = re.findall(r'\[([A-Z]+)(?::[^\]]*)?\]\n(.*?)(?=\n\[[A-Z]+(?::[^\]]+)?\]|\n\[FIN\]|$)', contenido, re.DOTALL)
+    try:
+        extension, texto_generado = generar_exportacion(contenido, nombre_base, formato)
+    except ValueError as e:
+        error(str(e))
+        return
     
-    if formato == "1":  # TXT
-        salida = ruta_salida + nombre_base + ".txt"
-        texto = re.search(r'\[TEXTO\]\n(.*?)(?=\n\[|\Z)', contenido, re.DOTALL)
-        if texto:
-            with open(salida, 'w', encoding='utf-8') as f:
-                f.write(texto.group(1).strip())
-            exito(f"Exportado a TXT: {salida}")
-        else:
-            error("No se encontró texto")
-    
-    elif formato == "2":  # JSON
-        salida = ruta_salida + nombre_base + ".json"
-        datos = {}
-        for nombre, valor in bloques:
-            try:
-                datos[nombre] = json.loads(valor.strip())
-            except:
-                datos[nombre] = valor.strip()
-        with open(salida, 'w', encoding='utf-8') as f:
-            json.dump(datos, f, indent=2)
-        exito(f"Exportado a JSON: {salida}")
-    
-    elif formato == "3":  # MD
-        salida = ruta_salida + nombre_base + ".md"
-        md = f"# {nombre_base}\n\n"
-        meta = re.search(r'\[METADATOS\]\n(.*?)(?=\n\[|\Z)', contenido, re.DOTALL)
-        if meta:
-            try:
-                metadatos = json.loads(meta.group(1).strip())
-                if metadatos.get('titulo'):
-                    md = f"# {metadatos['titulo']}\n\n"
-            except:
-                pass
-        texto = re.search(r'\[TEXTO\]\n(.*?)(?=\n\[|\Z)', contenido, re.DOTALL)
-        if texto:
-            md += texto.group(1).strip() + "\n\n"
-        with open(salida, 'w', encoding='utf-8') as f:
-            f.write(md)
-        exito(f"Exportado a MD: {salida}")
-    
-    elif formato == "4":  # XML
-        salida = ruta_salida + nombre_base + ".xml"
-        xml = '<?xml version="1.0" encoding="UTF-8"?>\n<hbf>\n'
-        for nombre, valor in bloques:
-            xml += f'  <{nombre.lower()}>\n'
-            valor_escapado = valor.strip().replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
-            xml += f'    <![CDATA[{valor_escapado}]]>\n'
-            xml += f'  </{nombre.lower()}>\n'
-        xml += "</hbf>"
-        with open(salida, 'w', encoding='utf-8') as f:
-            f.write(xml)
-        exito(f"Exportado a XML: {salida}")
-    
-    elif formato == "5":  # CSV
-        salida = ruta_salida + nombre_base + ".csv"
-        csv = "BLOQUE,CONTENIDO\n"
-        for nombre, valor in bloques:
-            valor_escapado = valor.strip().replace('"', '""')
-            csv += f'{nombre},"{valor_escapado}"\n'
-        with open(salida, 'w', encoding='utf-8') as f:
-            f.write(csv)
-        exito(f"Exportado a CSV: {salida}")
-    
-    elif formato == "6":  # YAML
-        salida = ruta_salida + nombre_base + ".yaml"
-        yaml = ""
-        for nombre, valor in bloques:
-            yaml += f"{nombre.lower()}:\n"
-            for linea in valor.strip().split('\n'):
-                yaml += f"  {linea}\n"
-        with open(salida, 'w', encoding='utf-8') as f:
-            f.write(yaml)
-        exito(f"Exportado a YAML: {salida}")
-    
-    elif formato == "7":  # HTML
-        salida = ruta_salida + nombre_base + ".html"
-        html = f"""<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>{nombre_base}</title>
-    <style>
-        body {{ font-family: Arial, sans-serif; margin: 40px; background: #f5f5f5; }}
-        .container {{ max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }}
-        .bloque {{ margin: 20px 0; padding: 15px; border-left: 4px solid #4CAF50; background: #f9f9f9; }}
-        .bloque-titulo {{ font-weight: bold; color: #333; margin-bottom: 10px; }}
-        .bloque-contenido {{ white-space: pre-wrap; font-family: monospace; }}
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>{nombre_base}</h1>
-"""
-        for nombre, valor in bloques:
-            # Si es una imagen, mostrarla
-            if nombre == "IMAGEN":
-                match = re.search(r'data:\s*([A-Za-z0-9+/=]+)', valor)
-                if match:
-                    html += f'        <div class="bloque">\n'
-                    html += f'            <div class="bloque-titulo">🖼️ {nombre}</div>\n'
-                    html += f'            <img src="data:image/png;base64,{match.group(1)}" style="max-width:100%"/>\n'
-                    html += f'        </div>\n'
-            else:
-                html += f'        <div class="bloque">\n'
-                html += f'            <div class="bloque-titulo">📦 {nombre}</div>\n'
-                html += f'            <div class="bloque-contenido">{valor.strip()}</div>\n'
-                html += f'        </div>\n'
-        html += f"""    </div>
-</body>
-</html>"""
-        with open(salida, 'w', encoding='utf-8') as f:
-            f.write(html)
-        exito(f"Exportado a HTML: {salida}")
-    
-    elif formato == "8":  # INI
-        salida = ruta_salida + nombre_base + ".ini"
-        ini = ""
-        for nombre, valor in bloques:
-            ini += f"[{nombre}]\n"
-            try:
-                datos = json.loads(valor.strip())
-                if isinstance(datos, dict):
-                    for key, val in datos.items():
-                        ini += f"{key} = {val}\n"
-                else:
-                    for linea in valor.strip().split('\n'):
-                        if ':' in linea or '=' in linea:
-                            ini += linea + '\n'
-            except:
-                for linea in valor.strip().split('\n'):
-                    if ':' in linea or '=' in linea:
-                        ini += linea + '\n'
-            ini += "\n"
-        with open(salida, 'w', encoding='utf-8') as f:
-            f.write(ini)
-        exito(f"Exportado a INI: {salida}")
-    
-    elif formato == "9":  # TOML
-        salida = ruta_salida + nombre_base + ".toml"
-        toml = ""
-        for nombre, valor in bloques:
-            toml += f"[{nombre.lower()}]\n"
-            try:
-                datos = json.loads(valor.strip())
-                for key, val in datos.items():
-                    if isinstance(val, str):
-                        toml += f'{key} = "{val}"\n'
-                    elif isinstance(val, (int, float, bool)):
-                        toml += f'{key} = {val}\n'
-                    elif isinstance(val, list):
-                        toml += f'{key} = [{", ".join(str(x) for x in val)}]\n'
-            except:
-                for linea in valor.strip().split('\n'):
-                    if ':' in linea:
-                        partes = linea.split(':', 1)
-                        toml += f'{partes[0].strip()} = "{partes[1].strip()}"\n'
-                    elif '=' in linea:
-                        toml += linea + '\n'
-            toml += "\n"
-        with open(salida, 'w', encoding='utf-8') as f:
-            f.write(toml)
-        exito(f"Exportado a TOML: {salida}")
-    
-    else:
-        error("Opción no válida")
+    salida = ruta_salida + nombre_base + "." + extension
+    with open(salida, 'w', encoding='utf-8') as f:
+        f.write(texto_generado)
+    exito(f"Exportado a {extension.upper()}: {salida}")
 
 
 
@@ -1803,15 +2065,21 @@ def toggle_compresion():
 
 def cambiar_colores():
     print("\n   🎨  COLORES\n")
-    print("   1. 🔵  Azul")
-    print("   2. 🟢  Verde")
-    print("   3. 🔴  Rojo")
-    print("   4. 🟡  Amarillo")
-    print("   5. 🟣  Morado")
+    print("   1.  🔵  Azul")
+    print("   2.  🟢  Verde")
+    print("   3.  🔴  Rojo")
+    print("   4.  🟡  Amarillo")
+    print("   5.  🟣  Morado")
+    print("   6.  🩵  Cian")
+    print("   7.  🟠  Naranja")
+    print("   8.  🩷  Rosa")
+    print("   9.  ⚪  Gris")
+    print("   10. 💚  Esmeralda")
     opcion = input_con_salida("   👉  Elegí: ")
     if opcion is None:
         return
-    colores = {"1": "azul", "2": "verde", "3": "rojo", "4": "amarillo", "5": "morado"}
+    colores = {"1": "azul", "2": "verde", "3": "rojo", "4": "amarillo", "5": "morado",
+               "6": "cian", "7": "naranja", "8": "rosa", "9": "gris", "10": "esmeralda"}
     color_elegido = colores.get(opcion)
     if color_elegido:
         config["color"] = color_elegido
@@ -2101,26 +2369,20 @@ def generar_desde_hbf():
 
 def mostrar_menu():
     limpiar()
-    print(f"""
-    {C['titulo']}╔═══════════════════════════════════════════════════════════╗
-    ║                                                           ║
-    ║     {T.get('titulo')}                                     ║
-    ║                                                           ║
-    ║     {T.get('creado_por')}                                 ║
-    ║                                                           ║
-    ╚═══════════════════════════════════════════════════════════╝{C['reset']}
-    """)
+    print(f"\n    {C['titulo']}╭─────────────╮{C['reset']}")
+    print(f"    {C['titulo']}│ [▬▬▬▬▬▬▬▬] │{C['reset']}  {C['titulo']}HBF{C['reset']}")
+    print(f"    {C['titulo']}╰─────────────╯{C['reset']}")
+    print(f"    {C['info']}{T.get('titulo')}{C['reset']}")
+    print(f"    {C['info']}{T.get('creado_por')}{C['reset']}\n")
     print(f"{C['info']}{T.get('guardado_en')}{C['reset']}")
     print(f"   📂  {RUTA_DESCARGAS}\n")
     if config.get("ruta_base"):
         print(f"{C['info']}{T.get('ruta_actual')}{C['reset']}")
         print(f"   📂  {config['ruta_base']}\n")
     print(f"{C['menu']}    {T.get('menu')}{C['reset']}\n")
-    print("    ┌────────────────────────────────────────────────────┐")
     opciones = T.opciones()
     for i, opcion in enumerate(opciones, 1):
-        print(f"    │  {i:2d}.  {opcion:<37}│")
-    print("    └────────────────────────────────────────────────────┘")
+        print(f"    {C['menu']}{i:2d}{C['reset']}  {opcion}")
     print(f"\n{C['info']}   {T.get('recordatorio')}{C['reset']}")
     print(f"\n{C['info']}   {T.get('cancelar_opcion')}{C['reset']}")
 

@@ -1,6 +1,6 @@
 {
   "nombre_idioma": "English",
-  "titulo": "📁 HBF - Hybrid Binary Format v3.0",
+  "titulo": "📁 HBF - Hybrid Binary Format v3.0.3",
   "creado_por": "Created by Lucas Sogaray",
   "guardado_en": "All files are saved in:",
   "menu": "What do you want to do?",
@@ -43,7 +43,7 @@
     "📤 Extract binary",
     "📤 Export",
     "🔍 Search",
-    "📂 List HBF",
+    "📂 List Vlsy",
     "📊 Statistics",
     "📜 History",
     "🔗 Combine HBF",
