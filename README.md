@@ -219,6 +219,19 @@ El archivo cifrado se guarda con extensión .hbf.enc
 
 ---
 
+## 🎮 Doom en HBF
+
+HBF no solo guarda datos: **también puede ejecutar Doom**.
+
+El archivo `Doom.hbf` contiene el binario del juego dentro del bloque `[BINARIO]`. El script `hbf-run.py` lo extrae y lo ejecuta en Termux X11.
+
+```bash
+python hbf-run.py Doom.hbf
+
+
+
+---
+
 📄 Licencia
 
 MIT — Podés usarlo, modificarlo y distribuirlo libremente.
